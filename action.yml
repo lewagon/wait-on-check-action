@@ -1,5 +1,6 @@
 # action.yml
 name: "Wait on check"
+author: "progapandist"
 description: "Wait on a certain check to pass for commit"
 inputs:
   ref:
@@ -22,3 +23,6 @@ runs:
     - ${{ inputs.ref }}
     - ${{ inputs.check-name }}
     - ${{ inputs.repo-token }}
+branding:
+  icon: "check-circle"
+  color: "green"
