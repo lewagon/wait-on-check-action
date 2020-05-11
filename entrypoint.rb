@@ -3,8 +3,10 @@ require "net/http"
 require "uri"
 require "json"
 
+REPO = ENV["GITHUB_REPOSITORY"]
+
 def query_check_status(ref, check_name, token)
-  uri = URI.parse("https://api.github.com/repos/lewagon/linkedin/commits/#{ref}/check-runs?check_name=#{check_name}")
+  uri = URI.parse("https://api.github.com/repos/#{REPO}/commits/#{ref}/check-runs?check_name=#{check_name}")
   request = Net::HTTP::Get.new(uri)
   request["Accept"] = "application/vnd.github.antiope-preview+json"
   request["Authorization"] = "token #{token}"

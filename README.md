@@ -10,7 +10,7 @@ On a failed check the action will exit with 1 and stop the workflow. On success 
 
 - A push to master triggers a `test` workflow that runs tests on application code.
 - A push to master triggers a webhook that builds an image on external service (Quay, DockerHub, etc.)
-- Once the image is built, a `repository_dispatch` hook is truggered from a third-party service that launches a `deploy` workflow.
+- Once the image is built, a `repository_dispatch` hook is triggered from a third-party service that launches a `deploy` workflow.
 - We don't want the `deploy` workflow to succeed until we're sure that the `master` branch is green in `test` workflow.
 - We add the "Wait on tests" step to make sure `deploy` does not succeed before `test` for a master branch.
 
