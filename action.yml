@@ -23,6 +23,7 @@ runs:
     - ${{ inputs.ref }}
     - ${{ inputs.check-name }}
     - ${{ inputs.repo-token }}
+    - ${{ inputs.wait-interval }}
 branding:
   icon: "check-circle"
   color: "green"
