@@ -1,1 +1,1 @@
-# Wait for Check action
+# Wait on Check action
