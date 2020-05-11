@@ -2,9 +2,8 @@
 
 This action can be used to halt any workflow until required checks for a given git ref (branch, tag, or commit SHA) pass successfully. It uses [GitHub Check Runs API](https://developer.github.com/v3/checks/runs/#list-check-runs-for-a-git-reference) to poll for a check result—until a check either succeeds or else.
 
-On successful check the action will yield control to next step.
-
-In any other scenario, the action will exit with status 1, failing the whole workflow.
+On successful check, the action will yield control to next step.
+In any other case, the action will exit with status 1, failing the whole workflow.
 
 :tada: It allows to work around a GitHub Actions limitation of non-interdependent _workflows_ (we can only depend on `job`s [inside a single workflow](https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idneeds)).
 
