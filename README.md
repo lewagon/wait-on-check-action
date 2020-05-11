@@ -1,10 +1,12 @@
 # Wait on Check action
 
-This action can be used to halt any workflow until required checks for a given ref pass successfully. It uses [GitHub Check Runs API](https://developer.github.com/v3/checks/runs/#list-check-runs-for-a-git-reference) to poll for a given check result agains a given git ref — until a check either succeeds or fails.
+This action can be used to halt any workflow until required checks for a given ref pass successfully. It uses [GitHub Check Runs API](https://developer.github.com/v3/checks/runs/#list-check-runs-for-a-git-reference) to poll for a given check result agains a given git ref—until a check either succeeds or fails.
 
 On a failed check the action will exit with 1 and stop the workflow. On success it will yield control to next step.
 
 :tada: It allows to work around a GitHub Actions limitation of non-interdependent _workflows_ (we can only depend on `job`s [inside a single workflow](https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idneeds)).
+
+In other words, you can **run your workflows in parallel** and only proceed with workflow B after workflow A completes and reports success.
 
 ### A real-world scenario
 
@@ -24,7 +26,7 @@ on:
     types: [build_success]
 
 jobs:
-  build:
+  deploy:
     # see https://github.com/lewagon/quay-github-actions-dispatch for use-case
     if: startsWith(github.sha, github.event.client_payload.text)
     name: Deploy new image
@@ -53,3 +55,57 @@ jobs:
       - name: Upgrade/install chart
         run: export KUBECONFIG=$GITHUB_WORKSPACE/.kubeconfig && make deploy latest_sha=$(echo $GITHUB_SHA | head -c7)}}
 ```
+
+### Figruring out check name
+
+```
+curl -X GET https://api.github.com/repos/OWNER/REPO/commits/REF/check-runs \
+-H 'Accept: application/vnd.github.antiope-preview+json' \
+-H 'Authorization: token 634f6a8a24867b13795ec3d611b6247b69d0129e' | jq '[.check_runs[].name]'
+```
+
+To figure out a check name—use the `curl` command above.
+Note that by default this will be a value of `jobs` key, unless the `name` is provided.
+
+```yml
+# .github/workflows/test.yml
+name: Rspec
+on:
+  push:
+    branches:
+      - master
+  # Will run once the PR is opened or a new commit is pushed against it
+  pull_request:
+    types:
+      - opened
+      - synchronize
+jobs:
+  test:
+    runs-on: ubuntu-latest
+      steps:
+      ...
+```
+
+:point_up: Name is `test`.
+
+```yml
+# .github/workflows/test.yml
+name: Rspec
+on:
+  push:
+    branches:
+      - master
+  # Will run once the PR is opened or a new commit is pushed against it
+  pull_request:
+    types:
+      - opened
+      - synchronize
+jobs:
+  test:
+    name: "My test workflow"
+    runs-on: ubuntu-latest
+      steps:
+      ...
+```
+
+:point_up: Name is "My test workflow"
