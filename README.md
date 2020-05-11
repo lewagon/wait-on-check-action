@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@master
 
       # This step will retry until required check passes
-      # and will fal the whole workflow if the check conclusion is not a success
+      # and will fail the whole workflow if the check conclusion is not a success
       - name: Wait on tests
         uses: lewagon/wait-on-check-action@v0.1-beta.2
         with:
