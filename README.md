@@ -61,7 +61,7 @@ jobs:
 ```
 curl -X GET https://api.github.com/repos/OWNER/REPO/commits/REF/check-runs \
 -H 'Accept: application/vnd.github.antiope-preview+json' \
--H 'Authorization: token 634f6a8a24867b13795ec3d611b6247b69d0129e' | jq '[.check_runs[].name]'
+-H 'Authorization: token GITHUB_REPO_READ_TOKEN' | jq '[.check_runs[].name]'
 ```
 
 To figure out a check name—use the `curl` command above.
