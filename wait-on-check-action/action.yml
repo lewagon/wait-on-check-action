@@ -1,0 +1,24 @@
+# action.yml
+name: "Wait on check"
+description: "Wait on a certain check to pass for commit"
+inputs:
+  ref:
+    description: "A git ref to be checked: branch/tag/commit sha"
+    required: true
+  check-name:
+    description: "A name of a check that has to pass"
+    required: true
+  repo-token:
+    description: "A GitHub token for the repo"
+    required: true
+  wait-interval:
+    description: "Seconds to wait between Checks API requests"
+    required: true
+    default: "10"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.ref }}
+    - ${{ inputs.check-name }}
+    - ${{ inputs.repo-token }}
