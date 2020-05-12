@@ -37,7 +37,7 @@ if current_status.nil?
 end
 
 while current_status == "in_progress"
-  puts "Requested check is still in progress, will check back in 10 seconds..."
+  puts "Requested check is still in progress, will check back in #{wait} seconds..."
   sleep(wait)
   current_status, conclusion = query_check_status(ref, check_name, token)
 end
