@@ -16,6 +16,12 @@ inputs:
     description: "Seconds to wait between Checks API requests"
     required: true
     default: "10"
+  repo:
+    description: "Repository name"
+    required: false
+  owner: 
+    description: "Owner of the repo"
+    required: false
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -24,6 +30,8 @@ runs:
     - ${{ inputs.check-name }}
     - ${{ inputs.repo-token }}
     - ${{ inputs.wait-interval }}
+    - ${{ inputs.repo] }}
+    - ${{ inputs.owner }}
 branding:
   icon: "check-circle"
   color: "green"
