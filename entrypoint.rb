@@ -5,8 +5,9 @@ require "json"
 
 REPO = ENV["GITHUB_REPOSITORY"]
 
-def query_check_status(ref, check_name, token)
-  uri = URI.parse("https://api.github.com/repos/#{REPO}/commits/#{ref}/check-runs?check_name=#{check_name}")
+def query_check_status(ref, check_name, token, repo, owner)
+  repository = owner + "/" + repo || REPO
+  uri = URI.parse("https://api.github.com/repos/#{repository}/commits/#{ref}/check-runs?check_name=#{check_name}")
   request = Net::HTTP::Get.new(uri)
   request["Accept"] = "application/vnd.github.antiope-preview+json"
   request["Authorization"] = "token #{token}"
@@ -27,9 +28,9 @@ end
 
 # check_name is the name of the "job" key in a workflow, or the full name if the "name" key
 # is provided for job. Probably, the "name" key should be kept empty to keep things short
-ref, check_name, token, wait = ARGV
+ref, check_name, token, wait, repo, owner = ARGV
 wait = wait.to_i
-current_status, conclusion = query_check_status(ref, check_name, token)
+current_status, conclusion = query_check_status(ref, check_name, token, repo, owner)
 
 if current_status.nil?
   puts "The requested check was never run against this ref, exiting..."
