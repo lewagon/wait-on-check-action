@@ -30,7 +30,7 @@ runs:
     - ${{ inputs.check-name }}
     - ${{ inputs.repo-token }}
     - ${{ inputs.wait-interval }}
-    - ${{ inputs.repo] }}
+    - ${{ inputs.repo }}
     - ${{ inputs.owner }}
 branding:
   icon: "check-circle"
