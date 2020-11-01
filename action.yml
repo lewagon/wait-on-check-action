@@ -20,7 +20,7 @@ inputs:
     description: "Repository name"
     required: false
   owner: 
-    description: "Owner of the repo"
+    description: "Repository owner"
     required: false
 runs:
   using: "docker"
