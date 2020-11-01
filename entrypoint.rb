@@ -6,7 +6,9 @@ require "json"
 REPO = ENV["GITHUB_REPOSITORY"]
 
 def query_check_status(ref, check_name, token, repo, owner)
+
   repository = owner + "/" + repo || REPO
+  defined? repo && owner ? repository = owner + "/" + repo : repository = REPO
   uri = URI.parse("https://api.github.com/repos/#{repository}/commits/#{ref}/check-runs?check_name=#{check_name}")
   request = Net::HTTP::Get.new(uri)
   request["Accept"] = "application/vnd.github.antiope-preview+json"
