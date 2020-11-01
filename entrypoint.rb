@@ -38,7 +38,7 @@ end
 while current_status == "queued" || current_status == "in_progress"
   puts "The requested check hasn't completed yet, will check back in #{wait} seconds..."
   sleep(wait)
-  current_status, conclusion = query_check_status(ref, check_name, token)
+  current_status, conclusion = query_check_status(ref, check_name, token, repo, owner)
 end
 
 puts "Check completed with a status #{current_status}, and conclusion #{conclusion}"
