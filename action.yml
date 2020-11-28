@@ -8,7 +8,8 @@ inputs:
     required: true
   check-name:
     description: "A name of a check that has to pass"
-    required: true
+    required: false
+    default: ""
   repo-token:
     description: "A GitHub token for the repo"
     required: true
