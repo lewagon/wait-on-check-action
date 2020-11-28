@@ -6,7 +6,9 @@ require "json"
 REPO = ENV["GITHUB_REPOSITORY"]
 
 def query_check_status(ref, check_name, token)
-  uri = URI.parse("https://api.github.com/repos/#{REPO}/commits/#{ref}/check-runs?check_name=#{check_name}")
+  uri = URI.parse("https://api.github.com/repos/#{REPO}/commits/#{ref}/check-runs#{
+    "?check_name=#{check_name}" if !check_name.empty?
+  }")
   request = Net::HTTP::Get.new(uri)
   request["Accept"] = "application/vnd.github.antiope-preview+json"
   request["Authorization"] = "token #{token}"
@@ -17,31 +19,39 @@ def query_check_status(ref, check_name, token)
     http.request(request)
   }
   parsed = JSON.parse(response.body)
-  return [nil, nil] if parsed["total_count"].zero?
 
-  [
-    parsed["check_runs"][0]["status"],
-    parsed["check_runs"][0]["conclusion"]
-  ]
+  parsed["check_runs"]
+end
+
+def all_checks_complete(checks)
+  checks.all? { |check| check['status'] != "queued" && check['status'] != "in_progress" }
 end
 
 # check_name is the name of the "job" key in a workflow, or the full name if the "name" key
 # is provided for job. Probably, the "name" key should be kept empty to keep things short
 ref, check_name, token, wait = ARGV
 wait = wait.to_i
-current_status, conclusion = query_check_status(ref, check_name, token)
+all_checks = query_check_status(ref, check_name, token)
 
-if current_status.nil?
+if !check_name.empty? && all_checks.empty?
   puts "The requested check was never run against this ref, exiting..."
   exit(false)
 end
 
-while current_status == "queued" || current_status == "in_progress"
-  puts "The requested check hasn't completed yet, will check back in #{wait} seconds..."
+all_complete = all_checks_complete(all_checks)
+
+while !all_complete
+  plural_part = all_checks.length > 1 ? "checks aren't" : "check isn't"
+  puts "The requested #{plural_part} complete yet, will check back in #{wait} seconds..."
   sleep(wait)
-  current_status, conclusion = query_check_status(ref, check_name, token)
+  all_checks = query_check_status(ref, check_name, token)
+  all_complete = all_checks_complete(all_checks)
 end
 
-puts "Check completed with a status #{current_status}, and conclusion #{conclusion}"
+puts "Checks completed:"
+puts all_checks.reduce("") { |message, check|
+  "#{message}#{check['name']}: #{check['status']} (#{check['conclusion']})\n"
+}
+
 # Bail if check is not success
-exit(false) unless conclusion == "success"
+exit(false) unless all_checks.all? { |check| check['conclusion'] === 'success' }

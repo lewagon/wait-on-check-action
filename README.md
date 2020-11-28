@@ -41,7 +41,7 @@ jobs:
         uses: lewagon/wait-on-check-action@v0.1
         with:
           ref: master # can be commit SHA or tag too
-          check-name: test # name of the existing check
+          check-name: test # name of the existing check - omit to wait for all checks
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 20 # seconds
 
