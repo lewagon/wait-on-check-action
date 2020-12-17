@@ -12,10 +12,11 @@ inputs:
     default: ""
   repo-token:
     description: "A GitHub token for the repo"
-    required: true
+    required: false
+    default: ""
   wait-interval:
     description: "Seconds to wait between Checks API requests"
-    required: true
+    required: false
     default: "10"
 runs:
   using: "docker"
