@@ -11,7 +11,7 @@ def query_check_status(ref, check_name, token)
   }")
   request = Net::HTTP::Get.new(uri)
   request["Accept"] = "application/vnd.github.antiope-preview+json"
-  request["Authorization"] = "token #{token}"
+  token.empty? || request["Authorization"] = "token #{token}"
   req_options = {
     use_ssl: uri.scheme == "https"
   }
