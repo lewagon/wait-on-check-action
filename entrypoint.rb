@@ -39,6 +39,7 @@ if !check_name.empty? && all_checks.empty?
 end
 
 all_other_checks = all_checks.reject{|check| check['name'] == workflow_name}
+puts "The workflow #{workflow_name} is waiting for the following checks to finish: #{all_other_checks.map{|check| check['name']}.join(', ')}"
 all_complete = all_checks_complete(all_other_checks)
 
 until all_complete
