@@ -19,9 +19,9 @@ inputs:
     required: false
     default: "10"
   running-workflow-name:
-    description: "Workflow that is waiting for the others"
+    description: "Name of the workflow to be ignored (the one who is waiting for the rest)"
     required: false
-    default: ${{ github.action }}
+    default: ""
 runs:
   using: "docker"
   image: "Dockerfile"
