@@ -110,3 +110,13 @@ jobs:
 ```
 
 :point_up: Name is `My test workflow`
+
+
+### Waiting for a specific check to finish OR waiting for all checks to finish
+
+There are two variables to have in mind:
+- `check-name`: Name of the check we want to wait to finish before continuing.
+- `running-workflow-name`: Name of the check that will wait for the rest.
+
+The first one is optional. If provided, the second one is not needed.
+If none of them is given, the check will wait "forever" because it will be waiting for itself to finish.
