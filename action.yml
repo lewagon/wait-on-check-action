@@ -18,6 +18,10 @@ inputs:
     description: "Seconds to wait between Checks API requests"
     required: false
     default: "10"
+  running-workflow-name:
+    description: "Workflow that is waiting for the others"
+    required: false
+    default: ${{ github.action }}
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -26,7 +30,7 @@ runs:
     - ${{ inputs.check-name }}
     - ${{ inputs.repo-token }}
     - ${{ inputs.wait-interval }}
-    - ${{ github.action }}
+    - ${{ inputs.running-workflow-name }}
 branding:
   icon: "check-circle"
   color: "green"
