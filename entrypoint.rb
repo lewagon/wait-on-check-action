@@ -29,7 +29,7 @@ end
 
 # check_name is the name of the "job" key in a workflow, or the full name if the "name" key
 # is provided for job. Probably, the "name" key should be kept empty to keep things short
-ref, check_name, token, wait = ARGV
+ref, check_name, token, wait, workflow_name = ARGV
 wait = wait.to_i
 all_checks = query_check_status(ref, check_name, token)
 
@@ -38,7 +38,8 @@ if !check_name.empty? && all_checks.empty?
   exit(false)
 end
 
-all_complete = all_checks_complete(all_checks)
+all_other_checks = all_checks.reject{|check| check['name'] == workflow_name}
+all_complete = all_checks_complete(all_other_checks)
 
 until all_complete
   plural_part = all_checks.length > 1 ? "checks aren't" : "check isn't"
