@@ -20,7 +20,7 @@ def query_check_status(ref, check_name, token)
   }
   parsed = JSON.parse(response.body)
 
-  parsed["check_runs"]
+  parsed["check_runs"].reject { |check| check['name'] == workflow_name }
 end
 
 def all_checks_complete(checks)
@@ -38,16 +38,11 @@ if !check_name.empty? && all_checks.empty?
   exit(false)
 end
 
-all_other_checks = all_checks.reject{|check| check['name'] == workflow_name}
-puts "The workflow #{workflow_name} is waiting for the following checks to finish: #{all_other_checks.map{|check| check['name']}.join(', ')}"
-all_complete = all_checks_complete(all_other_checks)
-
-until all_complete
-  plural_part = all_checks.length > 1 ? "checks aren't" : "check isn't"
+until all_checks_complete(all_checks)
+  plural_part = all_other_checks.length > 1 ? "checks aren't" : "check isn't"
   puts "The requested #{plural_part} complete yet, will check back in #{wait} seconds..."
   sleep(wait)
   all_checks = query_check_status(ref, check_name, token)
-  all_complete = all_checks_complete(all_checks)
 end
 
 puts "Checks completed:"
