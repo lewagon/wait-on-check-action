@@ -110,3 +110,39 @@ jobs:
 ```
 
 :point_up: Name is `My test workflow`
+
+
+### Waiting for a specific check to finish OR waiting for all checks to finish
+
+There are two variables to have in mind:
+- `check-name`: Name of the check we want to wait to finish before continuing.
+- `running-workflow-name`: Name of the check that will wait for the rest.
+
+The first one is optional. If provided, the second one is not needed.
+If none of them is given, the check will wait "forever" because it will be waiting for itself to finish.
+
+Example:
+
+```yml
+name: Waiting for checks and deploy
+
+on:
+  push:
+
+jobs:
+  deploy: # This name is the one to be used in `running-workflow-name`
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Wait on tests
+        uses: lewagon/wait-on-check-action@master
+        with:
+          ref: ${{ github.ref }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+          running-workflow-name: 'deploy' # HERE
+
+      - name: Step to deploy
+        run: echo 'success!'
+```
+
