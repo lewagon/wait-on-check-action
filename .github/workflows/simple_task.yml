@@ -1,0 +1,14 @@
+name: Simple Task
+
+on:
+  push:
+    tags:
+      - '*-test'
+
+jobs:
+  simple-task:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: simple task
+        run: echo 'done'

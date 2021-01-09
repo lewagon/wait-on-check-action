@@ -1,0 +1,21 @@
+name: Wait for it
+on:
+  push:
+    tags:
+      - '*-test'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Wait on tests
+        uses: matiasalbarello/wait-on-check-action@feature/select-branches-to-wait-with-regex
+        with:
+          ref: ${{ github.ref }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 30 # seconds
+          running-workflow-name: 'deploy'
+
+      - name: Continuos deployment
+        run: echo 'success!'
