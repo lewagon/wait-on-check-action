@@ -2,8 +2,7 @@ name: Simple Task
 
 on:
   push:
-    tags:
-      - '*-test'
+    branches:
 
 jobs:
   simple-task:

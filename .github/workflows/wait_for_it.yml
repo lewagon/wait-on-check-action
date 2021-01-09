@@ -1,8 +1,7 @@
 name: Wait for it
 on:
   push:
-    tags:
-      - '*-test'
+    branches:
 
 jobs:
   deploy:
