@@ -9,6 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        
       - name: Wait on tests
         uses: matiasalbarello/wait-on-check-action@feature/select-branches-to-wait-with-regex
         with:
