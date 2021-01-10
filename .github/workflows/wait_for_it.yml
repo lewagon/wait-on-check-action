@@ -2,7 +2,8 @@ name: Wait for it
 on:
   push:
     branches:
-      - "*"
+      - master
+      - feature/select-branches-to-wait-with-regex
 
 jobs:
   deploy:
