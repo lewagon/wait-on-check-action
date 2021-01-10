@@ -2,7 +2,7 @@ name: Wait using check-name
 on:
   push:
     tags:
-      - 'test/v*' # e.g. test/v1_2_3
+      - 'test-using-check-name/v*' # e.g. test-using-check-name/v1_2_3
 jobs:
   wait-for-check-name:
     runs-on: ubuntu-latest
