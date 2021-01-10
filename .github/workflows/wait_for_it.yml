@@ -2,6 +2,7 @@ name: Wait for it
 on:
   push:
     branches:
+      - "*"
 
 jobs:
   deploy:
