@@ -2,8 +2,7 @@ name: CI
 
 on:
   push:
-    tags:
-      - "*-test"
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -20,5 +19,5 @@ jobs:
       - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Trigger wait_omitting-check-name workflow
+        run: ./trigger-scripts/push-tag-trigger.sh "test-omitting-check-name/v"
