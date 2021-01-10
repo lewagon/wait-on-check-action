@@ -18,6 +18,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 30 # seconds
           running-workflow-name: 'deploy'
+          check-regexp: '.*-test'
 
       - name: Continuos deployment
         run: echo 'success!'
