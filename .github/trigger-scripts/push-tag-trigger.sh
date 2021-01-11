@@ -1,7 +1,8 @@
 #!/bin/sh
 set -eux
 prefix=$1
-tag_version=$(($RANDOM%100))
+random_num=$RANDOM
+tag_version="`echo $random_number % 100 | bc`"
 tag_name="$prefix$tag_version"
 
 git tag "$tag_name"
