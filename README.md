@@ -33,6 +33,7 @@ jobs:
     name: Deploy new image
     runs-on: ubuntu-latest
     steps:
+      # or actions/checkout@v0.2 for most recent stable version
       - uses: actions/checkout@master
 
       # This step will retry until required check passes
