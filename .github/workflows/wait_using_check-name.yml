@@ -22,7 +22,7 @@ jobs:
 
       - name: Delete tag
         run: git push --delete origin ${{ github.ref }}
-        if: contains(github.ref, "test-using-check-name")
+        if: ${{ contains(github.ref, 'test-using-check-name') }}
 
       - name: Success
         run: echo 'success!'
