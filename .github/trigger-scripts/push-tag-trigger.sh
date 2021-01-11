@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eux
 prefix=$1
-random_num=$RANDOM
+random_num=$2
 tag_version="`echo $random_number % 100 | bc`"
 tag_name="$prefix$tag_version"
 
