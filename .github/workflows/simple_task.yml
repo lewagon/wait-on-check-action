@@ -3,6 +3,7 @@ name: Simple Task
 on:
   push:
     branches:
+    tags:
 
 jobs:
   simple-task:

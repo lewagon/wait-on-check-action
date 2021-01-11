@@ -4,6 +4,8 @@ name: Simple Task "simple-task-test"
 
 on:
   push:
+    branches:
+    tags:
 
 jobs:
   simple-task-test:
