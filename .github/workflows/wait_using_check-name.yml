@@ -20,5 +20,9 @@ jobs:
           running-workflow-name: wait-for-check-name
           check-name: simple-task
 
+      - name: Delete tag
+        run: git push --delete origin ${{ github.ref }}
+        if: contains(github.ref, "test-using-check-name")
+
       - name: Success
         run: echo 'success!'

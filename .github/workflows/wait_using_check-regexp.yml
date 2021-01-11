@@ -20,5 +20,9 @@ jobs:
           running-workflow-name: wait-for-check-regexp
           check-regexp: .?-task
 
+      - name: Delete tag
+        run: git push --delete origin ${{ github.ref }}
+        if: contains(github.ref, "test-using-regexp")
+
       - name: Success
         run: echo 'success!'

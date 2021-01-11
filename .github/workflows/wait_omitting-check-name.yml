@@ -19,5 +19,9 @@ jobs:
           wait-interval: 10 # seconds
           running-workflow-name: wait-omitting-check-name
 
+      - name: Delete tag
+        run: git push --delete origin ${{ github.ref }}
+        if: contains(github.ref, "test-omitting-check-name")
+
       - name: Success
         run: echo 'success!'
