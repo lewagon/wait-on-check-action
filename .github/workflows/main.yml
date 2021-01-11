@@ -20,4 +20,6 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Trigger wait_omitting-check-name workflow
-        run: ./.github/trigger-scripts/push-tag-trigger.sh "test-omitting-check-name/v"
+        run: |
+          chmod +x ./.github/trigger-scripts/push-tag-trigger.sh
+          ./.github/trigger-scripts/push-tag-trigger.sh "test-omitting-check-name/v"
