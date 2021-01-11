@@ -17,6 +17,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PERSONAL_READ_ONLY_GITHUB_TOKEN }}
 
       # Runs a single command using the runners shell
       - name: Trigger wait_omitting-check-name workflow
