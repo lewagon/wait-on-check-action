@@ -2,6 +2,7 @@
 
 dirs = Dir['./spec/support/**/*.rb']
 dirs.sort.each { |f| require f }
+require 'byebug'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
