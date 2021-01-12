@@ -1,0 +1,14 @@
+{
+  "check_runs": [
+    {
+        "status": "in_progress",
+        "conclusion": null,
+        "name": "invoking_check"
+    },
+    {
+        "status": "completed",
+        "conclusion": "success",
+        "name": "check_completed"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+    "check_runs": [
+        {
+            "status": "in_progress",
+            "conclusion": null,
+            "name": "check_in_progress"
+        },
+        {
+            "status": "completed",
+            "conclusion": "success",
+            "name": "check_completed_success"
+        },
+        {
+            "status": "completed",
+            "conclusion": "failure",
+            "name": "check_completed_failure"
+        },
+        {
+            "status": "completed",
+            "conclusion": "neutral",
+            "name": "check_completed_neutral"
+        },
+        {
+            "status": "completed",
+            "conclusion": "timed_out",
+            "name": "check_completed_timed_out"
+        },
+        {
+            "status": "completed",
+            "conclusion": "action_required",
+            "name": "check_completed_action_required"
+        },
+        {
+            "status": "queued",
+            "conclusion": null,
+            "name": "action_queued"
+        }
+    ]
+}
