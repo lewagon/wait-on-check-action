@@ -3,7 +3,7 @@
         {
             "status": "in_progress",
             "conclusion": null,
-            "name": "check_in_progress"
+            "name": "invoking_check"
         },
         {
             "status": "completed",

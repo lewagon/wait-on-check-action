@@ -4,6 +4,7 @@ require 'spec_helper'
 describe 'entrypoint' do
   let(:all_successful_checks) { load_json_sample("all_checks_successfully_completed.json") }
   let(:all_checks) { load_json_sample("all_checks_results.json") }
+
   describe 'wait_for_checks' do
     it 'prints successful message to standard output' do
       mock_http_success(with_json: all_successful_checks)
@@ -41,6 +42,15 @@ describe 'entrypoint' do
           ]
         )).to be false
       end
+    end
+  end
+
+  describe 'query_check_status' do
+    it 'filters out the invoking check' do
+      mock_http_success(with_json: all_checks)
+      result = query_check_status("ref", "", "token", "invoking_check")
+
+      expect(result.map{|check| check['name']}).not_to include("invoking_check")
     end
   end
 end
