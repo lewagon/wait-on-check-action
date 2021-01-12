@@ -25,7 +25,7 @@ def query_check_status(ref, check_name, token, workflow_name)
 end
 
 def all_checks_complete(checks)
-  checks.all? { |check| check["status"] != "queued" && check["status"] != "in_progress" }
+  checks.all? { |check| check["status"] == "completed" }
 end
 
 def wait_for_checks(ref, check_name, token, wait, workflow_name)
