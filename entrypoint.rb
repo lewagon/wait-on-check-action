@@ -6,7 +6,6 @@ require "json"
 REPO = ENV["GITHUB_REPOSITORY"]
 
 def query_check_status(ref, check_name, token, workflow_name)
-  puts "quering check status with: ref: #{ref}, check_name: #{check_name}, workflow_name: #{workflow_name}"
   uri = URI.parse("https://api.github.com/repos/#{REPO}/commits/#{ref}/check-runs#{
     "?check_name=#{check_name}" unless check_name.empty?
   }")
