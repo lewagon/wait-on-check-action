@@ -27,14 +27,23 @@ def all_checks_complete(checks)
   checks.all? { |check| check["status"] == "completed" }
 end
 
+def fail_if_requested_check_never_run(check_name, all_checks)
+  return unless !check_name.empty? && all_checks.empty?
+
+  raise StandardError, "The requested check was never run against this ref, exiting..."
+end
+
+def fail_unless_all_success(checks)
+  return if checks.all? { |check| check["conclusion"] === "success" }
+
+  raise StandardError, "One or more checks were not successful, exiting..."
+end
+
 def wait_for_checks(ref, check_name, token, wait, workflow_name)
   wait = wait.to_i
   all_checks = query_check_status(ref, check_name, token, workflow_name)
 
-  if !check_name.empty? && all_checks.empty?
-    puts "The requested check was never run against this ref, exiting..."
-    exit(false)
-  end
+  fail_if_requested_check_never_run(check_name, all_checks)
 
   until all_checks_complete(all_checks)
     plural_part = all_checks.length > 1 ? "checks aren't" : "check isn't"
@@ -48,13 +57,17 @@ def wait_for_checks(ref, check_name, token, wait, workflow_name)
     "#{message}#{check["name"]}: #{check["status"]} (#{check["conclusion"]})\n"
   }
 
-  # Bail if check is not success
-  exit(false) unless all_checks.all? { |check| check["conclusion"] === "success" }
+  fail_unless_all_success(all_checks)
+rescue StandardError => e
+  puts e.full_message
+  exit(false)
 end
 
 # check_name is the name of the "job" key in a workflow, or the full name if the "name" key
 # is provided for job. Probably, the "name" key should be kept empty to keep things short
 if $0 == __FILE__
-  ref, check_name, token, wait, workflow_name = ARGV
-  wait_for_checks(ref, check_name, token, wait, workflow_name)
+  begin
+    ref, check_name, token, wait, workflow_name = ARGV
+    wait_for_checks(ref, check_name, token, wait, workflow_name)
+  end
 end
