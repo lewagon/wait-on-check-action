@@ -1,0 +1,28 @@
+name: Backend tests & Rubocop
+
+on:
+  push:
+    paths-ignore:
+      - 'README.md'
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+
+  workflow_dispatch:
+
+jobs:
+  run-specs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Run tests
+        run: cd app && bundle exec rspec
