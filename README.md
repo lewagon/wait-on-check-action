@@ -1,3 +1,5 @@
+![RSpec Tests](https://github.com/lewagon/wait-on-check-action/workflows/RSpec%20tests/badge.svg)
+
 # Wait on Check action
 
 This action can be used to halt any workflow until required checks for a given git ref (branch, tag, or commit SHA) pass successfully. It uses [GitHub Check Runs API](https://developer.github.com/v3/checks/runs/#list-check-runs-for-a-git-reference) to poll for a check result—until a check either succeeds or else.
@@ -39,7 +41,7 @@ jobs:
       # and will fail the whole workflow if the check conclusion is not a success
       - name: Wait on tests
         # or lewagon/wait-on-check-action@v0.2 for most recent stable version
-        uses: lewagon/wait-on-check-action@master 
+        uses: lewagon/wait-on-check-action@master
         with:
           ref: master # can be commit SHA or tag too
           check-name: test # name of the existing check - omit to wait for all checks
@@ -146,4 +148,3 @@ jobs:
       - name: Step to deploy
         run: echo 'success!'
 ```
-
