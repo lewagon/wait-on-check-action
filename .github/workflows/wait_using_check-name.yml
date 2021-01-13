@@ -3,6 +3,8 @@ on:
   push:
     tags:
       - 'test-using-check-name/v*' # e.g. test-using-check-name/v1_2_3
+  workflow_dispatch:
+
 jobs:
   wait-for-check-name:
     runs-on: ubuntu-latest
@@ -10,7 +12,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.ref }}
-        
+
       - name: Wait on tests
         uses: ./
         with:

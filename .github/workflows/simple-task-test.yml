@@ -6,13 +6,16 @@ on:
   push:
     branches:
     tags:
+  workflow_dispatch:
 
 jobs:
   simple-task-test:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: delay execution if manually executed
+        run: sleep 1m
+        if: ${{ github.event == 'workflow_dispatch' }}
 
       - name: Run a one-line script
-        run: echo 'success!'
+        run: echo 'done'

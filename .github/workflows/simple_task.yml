@@ -3,12 +3,16 @@ name: Simple Task
 on:
   push:
     branches:
-    tags:
+  workflow_dispatch:
 
 jobs:
   simple-task:
     runs-on: ubuntu-latest
 
     steps:
-      - name: simple task
+      - name: delay execution if manually executed
+        run: sleep 1m
+        if: ${{ github.event == 'workflow_dispatch' }}
+
+      - name: Run a one-line script
         run: echo 'done'
