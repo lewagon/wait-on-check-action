@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
-dirs = Dir['./spec/support/**/*.rb']
-dirs.sort.each { |f| require f }
 require 'byebug'
+
+services = Dir['./services/**/*.rb']
+services.sort.each { |f| require f }
+
+test_helpers = Dir['./spec/support/**/*.rb']
+test_helpers.sort.each { |f| require f }
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
