@@ -9,7 +9,7 @@ class GithubChecksVerifier < ApplicationService
   def call
     wait_for_checks
   rescue StandardError => e
-    puts e.full_message
+    puts e.message
     exit(false)
   end
 

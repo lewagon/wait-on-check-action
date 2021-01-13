@@ -1,7 +1,15 @@
 require "spec_helper"
 
 describe GithubChecksVerifier do
-  let(:service) { described_class.new("ref", "check_name", "token", "1", "invoking_check") }
+  let(:service) { described_class.new("ref", "check_name", "token", "0", "invoking_check") }
+
+  describe "#call" do
+    before { allow(service).to receive(:wait_for_checks).and_raise(StandardError, "test error") }
+
+    it "exit with status false if wait_for_checks fails" do
+      expect { with_captured_stdout { service.call } }.to raise_error(SystemExit)
+    end
+  end
 
   describe "#wait_for_checks" do
     it "waits until all checks are completed" do
@@ -19,7 +27,7 @@ describe GithubChecksVerifier do
       mock_http_success(with_json: all_successful_checks)
       output = with_captured_stdout{ service.wait_for_checks }
 
-      expect(output).to include("The requested check isn't complete yet, will check back in 1 seconds...")
+      expect(output).to include("The requested check isn't complete yet, will check back in #{service.wait} seconds...")
     end
   end
 
