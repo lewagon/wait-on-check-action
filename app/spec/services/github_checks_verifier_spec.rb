@@ -15,12 +15,7 @@ describe GithubChecksVerifier do
     it "waits until all checks are completed" do
       cycles = 1 # simulates the method waiting for one cyecle
       allow(service).to receive(:all_checks_complete) do
-        if cycles > 0
-          cycles -= 1
-          false
-        else
-          true
-        end
+        (cycles -= 1) && cycles < 0
       end
 
       all_successful_checks = load_json_sample("all_checks_successfully_completed.json")
