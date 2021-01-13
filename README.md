@@ -1,4 +1,4 @@
-![RSpec Tests](https://github.com/matiasalbarello/wait-on-check-action/workflows/RSpec%20tests/badge.svg)
+![RSpec Tests](https://github.com/lewagon/wait-on-check-action/workflows/RSpec%20tests/badge.svg)
 
 # Wait on Check action
 
