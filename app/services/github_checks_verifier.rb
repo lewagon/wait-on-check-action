@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require_relative "./application_service"
 require "net/http"
 require "uri"
 require "json"
