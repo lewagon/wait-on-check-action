@@ -85,8 +85,8 @@ describe GithubChecksVerifier do
   describe "#fail_unless_all_success" do
     it "raises an exception if some check is not successful" do
       all_checks = [
-        { "name" => "test", "status" => "success" },
-        { "name" => "test", "status" => "failure" }
+        { "name" => "test", "status" => "completed", "conclusion" => "success" },
+        { "name" => "test", "status" => "completed", "conclusion" => "failure" }
       ]
 
       expect do
