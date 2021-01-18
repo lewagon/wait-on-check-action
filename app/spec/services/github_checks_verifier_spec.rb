@@ -61,7 +61,10 @@ describe GithubChecksVerifier do
     it "filters out the invoking check" do
       all_checks = load_json_sample("all_checks_results.json")
       mock_http_success(with_json: all_checks)
-      service.check_name = "invoking_check"
+
+      service = described_class.new("", "", "", "0", "")
+      service.workflow_name = "invoking_check"
+
       result = service.query_check_status
 
       expect(result.map{|check| check["name"]}).not_to include("invoking_check")
