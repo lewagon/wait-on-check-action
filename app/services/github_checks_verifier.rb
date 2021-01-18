@@ -3,9 +3,11 @@ require_relative "./application_service"
 require "net/http"
 require "uri"
 require "json"
+require "octokit"
 
 class GithubChecksVerifier < ApplicationService
   attr_accessor :check_name, :token, :wait, :workflow_name, :github_api_uri
+  attr_accessor :client, :repo, :ref
 
   def call
     wait_for_checks
@@ -17,33 +19,30 @@ class GithubChecksVerifier < ApplicationService
   # check_name is the name of the "job" key in a workflow, or the full name if the "name" key
   # is provided for job. Probably, the "name" key should be kept empty to keep things short
   def initialize(ref, check_name, token, wait, workflow_name)
+    @client = Octokit::Client.new(access_token: token)
+    @repo = ENV["GITHUB_REPOSITORY"]
+    @ref = ref
     @check_name = check_name
     @token = token
     @wait = wait.to_i
     @workflow_name = workflow_name
-    @github_api_uri = "https://api.github.com/repos/#{ENV["GITHUB_REPOSITORY"]}/commits/#{ref}/check-runs#{
-      "?check_name=#{check_name}" unless check_name.empty?
-    }"
   end
 
   def query_check_status
-    uri = URI.parse(github_api_uri)
-    request = Net::HTTP::Get.new(uri)
-    request["Accept"] = "application/vnd.github.antiope-preview+json"
-    token.empty? || request["Authorization"] = "token #{token}"
-    req_options = {
-      use_ssl: uri.scheme == "https"
-    }
-    response = Net::HTTP.start(uri.hostname, uri.port, req_options) { |http|
-      http.request(request)
-    }
-    parsed = JSON.parse(response.body)
+    checks = @client.check_runs_for_ref(@repo, @ref, { :accept => "application/vnd.github.antiope-preview+json"}).check_runs
+    checks.reject!{ |check| check.name == workflow_name }
+    checks.select!{ |check| check.name == check_name } if check_name
 
-    parsed["check_runs"].reject { |check| check["name"] == workflow_name }
+    checks
   end
 
+
   def all_checks_complete(checks)
-    checks.all? { |check| check["status"] == "completed" }
+    checks.all?{ |check| check.status == "completed" }
+  end
+
+  def filters_present?
+    (!check_name.nil? && !check_name.empty?) || (!check_regexp.nil? && !check_regexp.empty?)
   end
 
   def fail_if_requested_check_never_run(check_name, all_checks)
@@ -53,7 +52,7 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def fail_unless_all_success(checks)
-    return if checks.all? { |check| check["conclusion"] === "success" }
+    return if checks.all?{ |check| check.conclusion == "success" }
 
     raise StandardError, "One or more checks were not successful, exiting..."
   end
@@ -61,7 +60,7 @@ class GithubChecksVerifier < ApplicationService
   def show_checks_conclusion_message(checks)
     puts "Checks completed:"
     puts checks.reduce("") { |message, check|
-      "#{message}#{check["name"]}: #{check["status"]} (#{check["conclusion"]})\n"
+      "#{message}#{check.name}: #{check.status} (#{check.conclusion})\n"
     }
   end
 

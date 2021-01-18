@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "ostruct"
 
 module Helpers
   SAMPLE_RESPONSES_BASE_PATH = "spec/github_api_sample_responses/"
@@ -7,10 +8,13 @@ module Helpers
     File.read(SAMPLE_RESPONSES_BASE_PATH + file_name)
   end
 
-  def mock_http_success(with_json:)
-    response = Net::HTTPSuccess.new(1.0, '200', 'OK')
-    allow_any_instance_of(Net::HTTP).to receive(:request) { response }
-    allow(response).to receive(:body) { with_json }  
+  def load_checks_from_yml(yml_file)
+    JSON.parse(load_json_sample(yml_file))["check_runs"].map { |check| OpenStruct.new(check) }
+  end
+
+  def mock_api_response(checks)
+    response = double(check_runs: checks)
+    allow_any_instance_of(Octokit::Client).to receive(:check_runs_for_ref) { response }
   end
 
   def with_captured_stdout

@@ -1,7 +1,8 @@
 require "spec_helper"
+require "ostruct"
 
 describe GithubChecksVerifier do
-  let(:service) { described_class.new("ref", "check_name", "token", "0", "invoking_check") }
+  let(:service) { described_class.new("", "", "", "0", "") }
 
   describe "#call" do
     before { allow(service).to receive(:wait_for_checks).and_raise(StandardError, "test error") }
@@ -18,8 +19,8 @@ describe GithubChecksVerifier do
         (cycles -= 1) && cycles < 0
       end
 
-      all_successful_checks = load_json_sample("all_checks_successfully_completed.json")
-      mock_http_success(with_json: all_successful_checks)
+      all_successful_checks = load_checks_from_yml("all_checks_successfully_completed.json")
+      mock_api_response(all_successful_checks)
       output = with_captured_stdout{ service.wait_for_checks }
 
       expect(output).to include("The requested check isn't complete yet, will check back in #{service.wait} seconds...")
@@ -30,8 +31,8 @@ describe GithubChecksVerifier do
     it "returns true if all checks are in status complete" do
       expect(service.all_checks_complete(
         [
-          { "status" => "completed" },
-          { "status" => "completed" }
+          OpenStruct.new(name: "test", status: "completed", conclusion: "success"),
+          OpenStruct.new(name: "test", status: "completed", conclusion: "failure")
         ]
       )).to be true
     end
@@ -40,8 +41,8 @@ describe GithubChecksVerifier do
       it "false if some check still queued" do
         expect(service.all_checks_complete(
           [
-            { "status" => "completed" },
-            { "status" => "queued" }
+            OpenStruct.new(name: "test", status: "completed", conclusion: "success"),
+            OpenStruct.new(name: "test", status: "queued", conclusion: nil)
           ]
         )).to be false
       end
@@ -49,8 +50,8 @@ describe GithubChecksVerifier do
       it "false if some check is in progress" do
         expect(service.all_checks_complete(
           [
-            { "status" => "completed" },
-            { "status" => "in_progress" }
+            OpenStruct.new(name: "test", status: "completed", conclusion: "success"),
+            OpenStruct.new(name: "test", status: "in_progress", conclusion: nil)
           ]
         )).to be false
       end
@@ -59,15 +60,15 @@ describe GithubChecksVerifier do
 
   describe "#query_check_status" do
     it "filters out the invoking check" do
-      all_checks = load_json_sample("all_checks_results.json")
-      mock_http_success(with_json: all_checks)
+      all_checks = load_checks_from_yml("all_checks_results.json")
+      mock_api_response(all_checks)
 
       service = described_class.new("", "", "", "0", "")
       service.workflow_name = "invoking_check"
 
       result = service.query_check_status
 
-      expect(result.map{|check| check["name"]}).not_to include("invoking_check")
+      expect(result.map(&:name)).not_to include("invoking_check")
     end
   end
 
@@ -85,8 +86,8 @@ describe GithubChecksVerifier do
   describe "#fail_unless_all_success" do
     it "raises an exception if some check is not successful" do
       all_checks = [
-        { "name" => "test", "status" => "completed", "conclusion" => "success" },
-        { "name" => "test", "status" => "completed", "conclusion" => "failure" }
+        OpenStruct.new(name: "test", status: "completed", conclusion: "success"),
+        OpenStruct.new(name: "test", status: "completed", conclusion: "failure")
       ]
 
       expect do
@@ -97,7 +98,7 @@ describe GithubChecksVerifier do
 
   describe "#show_checks_conclusion_message" do
     it "prints successful message to standard output" do
-      checks = [{ "name" => "check_completed", "status" => "completed", "conclusion" => "success" }]
+      checks = [OpenStruct.new(name: "check_completed", status: "completed", conclusion: "success")]
       output = with_captured_stdout{ service.show_checks_conclusion_message(checks) }
 
       expect(output).to include("check_completed: completed (success)")
