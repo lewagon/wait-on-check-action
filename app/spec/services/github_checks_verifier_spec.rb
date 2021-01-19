@@ -33,7 +33,8 @@ describe GithubChecksVerifier do
       expect(service.all_checks_complete(
         [
           OpenStruct.new(name: "test", status: "completed", conclusion: "success"),
-          OpenStruct.new(name: "test", status: "completed", conclusion: "failure")
+          OpenStruct.new(name: "test", status: "completed", conclusion: "failure"),
+          OpenStruct.new(name: "test", status: "completed", conclusion: "skipped"),
         ]
       )).to be true
     end
@@ -94,6 +95,17 @@ describe GithubChecksVerifier do
       expect do
         service.fail_unless_all_success(all_checks)
       end.to raise_error(StandardError, "One or more checks were not successful, exiting...")
+    end
+
+    it "does not raise an exception if all checks are successfull" do
+      all_checks = [
+        OpenStruct.new(name: "test", status: "completed", conclusion: "success"),
+        OpenStruct.new(name: "test", status: "completed", conclusion: "skipped")
+      ]
+
+      expect do
+        service.fail_unless_all_success(all_checks)
+      end.not_to raise_error(StandardError, "One or more checks were not successful, exiting...")
     end
   end
 

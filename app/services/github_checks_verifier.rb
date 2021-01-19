@@ -17,13 +17,14 @@ class GithubChecksVerifier < ApplicationService
 
   # check_name is the name of the "job" key in a workflow, or the full name if the "name" key
   # is provided for job. Probably, the "name" key should be kept empty to keep things short
-  def initialize(ref, check_name, token, wait, workflow_name)
+  def initialize(ref, check_name, token, wait, workflow_name, allow_skipped)
     @client = Octokit::Client.new(access_token: token)
     @repo = ENV["GITHUB_REPOSITORY"]
     @ref = ref
     @check_name = check_name
     @wait = wait.to_i
     @workflow_name = workflow_name
+    @allow_skipped = allow_skipped
   end
 
   def query_check_status
@@ -50,7 +51,7 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def fail_unless_all_success(checks)
-    return if checks.all?{ |check| check.conclusion == "success" }
+    return if checks.all?{ |check| check.conclusion == "success" || (@allow_skipped && check.conclusion == "skipped") }
 
     raise StandardError, "One or more checks were not successful, exiting..."
   end
