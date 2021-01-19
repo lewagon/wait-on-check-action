@@ -21,6 +21,7 @@ describe GithubChecksVerifier do
 
       all_successful_checks = load_checks_from_yml("all_checks_successfully_completed.json")
       mock_api_response(all_successful_checks)
+      service.workflow_name = "invoking_check"
       output = with_captured_stdout{ service.wait_for_checks }
 
       expect(output).to include("The requested check isn't complete yet, will check back in #{service.wait} seconds...")
