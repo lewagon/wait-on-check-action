@@ -143,5 +143,46 @@ describe GithubChecksVerifier do
 
       expect(checks.map(&:name)).not_to include("workflow_name")
     end
+
+    it "apply the regexp filter" do
+      checks = [
+        OpenStruct.new(name: "test", status: "pending"),
+        OpenStruct.new(name: "test", status: "queued")
+      ]
+      allow(service).to receive(:apply_regexp_filter)
+      service.apply_filters(checks)
+
+      # only assert that the method is called. The functionality will be tested
+      # on #apply_regexp_filter tests
+      expect(service).to have_received(:apply_regexp_filter)
+    end
+  end
+
+  describe "#apply_regexp_filter" do
+    it "simple regexp" do
+      checks = [
+        OpenStruct.new(name: "check_name", status: "queued"),
+        OpenStruct.new(name: "other_check", status: "queued")
+      ]
+
+      service.check_regexp = Regexp.new('._check')
+      service.apply_regexp_filter(checks)
+
+      expect(checks.map(&:name)).to include("other_check")
+      expect(checks.map(&:name)).not_to include("check_name")
+    end
+
+    it "complex regexp" do
+      checks = [
+        OpenStruct.new(name: "test@example.com", status: "queued"),
+        OpenStruct.new(name: "other_check", status: "queued")
+      ]
+
+      service.check_regexp = Regexp.new('\A[\w.+-]+@\w+\.\w+\z')
+      service.apply_regexp_filter(checks)
+
+      expect(checks.map(&:name)).not_to include("other_check")
+      expect(checks.map(&:name)).to include("test@example.com")
+    end
   end
 end

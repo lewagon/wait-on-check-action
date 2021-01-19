@@ -26,10 +26,14 @@ class GithubChecksVerifier < ApplicationService
   def apply_filters(checks)
     checks.reject!{ |check| check.name == workflow_name }
     checks.select!{ |check| check.name == check_name } if check_name.present?
+    apply_regexp_filter(checks)
 
     checks
   end
 
+  def apply_regexp_filter(checks)
+    checks.select!{ |check| check.name[check_regexp] } if check_regexp.present?
+  end
 
   def all_checks_complete(checks)
     checks.all?{ |check| check.status == "completed" }
