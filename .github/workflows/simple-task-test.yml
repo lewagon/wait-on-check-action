@@ -1,0 +1,21 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Simple Task "simple-task-test"
+
+on:
+  push:
+    branches:
+    tags:
+  workflow_dispatch:
+
+jobs:
+  simple-task-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: delay execution if manually executed
+        run: sleep 1m
+        if: ${{ github.event == 'workflow_dispatch' }}
+
+      - name: Run a one-line script
+        run: echo 'done'

@@ -1,3 +1,5 @@
+![RSpec Tests](https://github.com/lewagon/wait-on-check-action/workflows/RSpec%20tests/badge.svg)
+
 # Wait on Check action
 
 This action can be used to halt any workflow until required checks for a given git ref (branch, tag, or commit SHA) pass successfully. It uses [GitHub Check Runs API](https://developer.github.com/v3/checks/runs/#list-check-runs-for-a-git-reference) to poll for a check result—until a check either succeeds or else.
@@ -39,7 +41,7 @@ jobs:
       # and will fail the whole workflow if the check conclusion is not a success
       - name: Wait on tests
         # or lewagon/wait-on-check-action@v0.2 for most recent stable version
-        uses: lewagon/wait-on-check-action@master 
+        uses: lewagon/wait-on-check-action@master
         with:
           ref: master # can be commit SHA or tag too
           check-name: test # name of the existing check - omit to wait for all checks
@@ -147,3 +149,12 @@ jobs:
         run: echo 'success!'
 ```
 
+### How to use the test workflows
+
+There are a few basic sample workflows in the `.github/workflows` directory. Two of them are just simple tasks that print something to the console. They are there just to emulate "real world" actions being executed that have to be waited. The important workflow are the ones that use the hereby implemented wait-on-check-action.
+To watch them in action, you'll need to fork the repo and, from your local computer, run the bash script included in `.github/trigger-scripts` directory:
+```bash
+.github/trigger-scripts/trigger-test-workflows.sh
+```
+This script creates a couple of tags in your forked repo (make sure you use `origin` as your remote) that will trigger the mentioned workflows. These include a step to remove the created tag.
+You'll see that the workflow named "wait_omitting-check-name" waits for the two simple-tasks, while the one named "wait_using_check-name" only waits for "simple-task".
