@@ -6,8 +6,7 @@ require "json"
 require "octokit"
 
 class GithubChecksVerifier < ApplicationService
-  attr_accessor :check_name, :token, :wait, :workflow_name, :github_api_uri
-  attr_accessor :client, :repo, :ref
+  attr_accessor :check_name, :wait, :workflow_name, :client, :repo, :ref
 
   def call
     wait_for_checks
@@ -23,7 +22,6 @@ class GithubChecksVerifier < ApplicationService
     @repo = ENV["GITHUB_REPOSITORY"]
     @ref = ref
     @check_name = check_name
-    @token = token
     @wait = wait.to_i
     @workflow_name = workflow_name
   end
