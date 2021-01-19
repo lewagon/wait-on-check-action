@@ -19,7 +19,9 @@ jobs:
 
     steps:
       - name: delay execution if manually executed
-        run: sleep 1m
+        env:
+          input_delay: ${{ github.event.inputs.delay_seconds }}
+        run: sleep $input_delay
         if: ${{ github.event_name == 'workflow_dispatch' }}
 
       - name: Run a one-line script
