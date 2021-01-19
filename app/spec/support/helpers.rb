@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 require "ostruct"
-
+require "json"
 module Helpers
   SAMPLE_RESPONSES_BASE_PATH = "spec/github_api_sample_responses/"
 
