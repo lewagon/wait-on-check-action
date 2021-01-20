@@ -40,8 +40,8 @@ jobs:
       # This step will retry until required check passes
       # and will fail the whole workflow if the check conclusion is not a success
       - name: Wait on tests
-        # or lewagon/wait-on-check-action@v0.2 for most recent stable version
-        uses: lewagon/wait-on-check-action@master
+        # or lewagon/wait-on-check-action@master, but master is not guaranteed to be stable ATM
+        uses: lewagon/wait-on-check-action@v0.2
         with:
           ref: master # can be commit SHA or tag too
           check-name: test # name of the existing check - omit to wait for all checks
