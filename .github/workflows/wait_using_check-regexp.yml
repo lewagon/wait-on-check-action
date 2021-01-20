@@ -1,5 +1,7 @@
 name: Wait using check-regexp
 on:
+  pull_request:
+    types: [opened, synchronize]
   push:
     tags:
       - 'test-using-regexp/v*' # e.g. test-using-regexp/v1_2_3

@@ -3,6 +3,8 @@
 name: Simple Task "simple-task-test"
 
 on:
+  pull_request:
+    types: [opened, synchronize]
   push:
     branches:
     tags:

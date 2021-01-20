@@ -1,5 +1,7 @@
 name: Wait omitting check-name
 on:
+  pull_request:
+    types: [opened, synchronize]
   push:
     tags:
       - 'test-omitting-check-name/v*' # e.g. test-omitting-check-name/v1_2_3

@@ -1,6 +1,8 @@
 name: Simple Task
 
 on:
+  pull_request:
+    types: [opened, synchronize]
   push:
     branches:
   workflow_dispatch:
