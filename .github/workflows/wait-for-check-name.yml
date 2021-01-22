@@ -3,6 +3,8 @@ on:
   pull_request:
     types: [opened, synchronize]
   push:
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
@@ -16,7 +18,7 @@ jobs:
       - name: Wait on tests
         uses: ./
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.ref }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10 # seconds
           running-workflow-name: wait-for-check-name
