@@ -1,0 +1,25 @@
+name: Workflow to wait on
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+  workflow_dispatch:
+    inputs:
+      delay_seconds:
+        description: 'Time to delay'
+        required: false
+        default: 120
+
+jobs:
+  wait-on-me:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Do some busywork
+        env:
+          input_delay: ${{ github.event.inputs.delay_seconds }} || 120
+        run: echo "Doing busywork"; sleep $input_delay
+
+      - name: Report success
+        run: echo 'Done with busywork'

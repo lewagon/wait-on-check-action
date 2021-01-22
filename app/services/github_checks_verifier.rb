@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative "./application_service"
 require "active_support/configurable"
 
@@ -13,30 +14,31 @@ class GithubChecksVerifier < ApplicationService
 
   def call
     wait_for_checks
-  rescue StandardError => e
+  rescue => e
     puts e.message
     exit(false)
   end
 
   def query_check_status
-    checks = client.check_runs_for_ref(repo, ref, { :accept => "application/vnd.github.antiope-preview+json"}).check_runs
+    checks = client.check_runs_for_ref(repo, ref, {accept: "application/vnd.github.antiope-preview+json"}).check_runs
+    puts checks # DEBUG
     apply_filters(checks)
   end
 
   def apply_filters(checks)
-    checks.reject!{ |check| check.name == workflow_name }
-    checks.select!{ |check| check.name == check_name } if check_name.present?
+    checks.reject! { |check| check.name == workflow_name }
+    checks.select! { |check| check.name == check_name } if check_name.present?
     apply_regexp_filter(checks)
 
     checks
   end
 
   def apply_regexp_filter(checks)
-    checks.select!{ |check| check.name[check_regexp] } if check_regexp.present?
+    checks.select! { |check| check.name[check_regexp] } if check_regexp.present?
   end
 
   def all_checks_complete(checks)
-    checks.all?{ |check| check.status == "completed" }
+    checks.all? { |check| check.status == "completed" }
   end
 
   def filters_present?
@@ -50,7 +52,7 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def fail_unless_all_success(checks)
-    return if checks.all?{ |check| check.conclusion == "success" }
+    return if checks.all? { |check| check.conclusion == "success" }
 
     raise StandardError, "One or more checks were not successful, exiting..."
   end

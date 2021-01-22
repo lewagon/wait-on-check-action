@@ -2,8 +2,6 @@
 require_relative "./app/services/github_checks_verifier.rb"
 require "octokit"
 
-# check_name is the name of the "job" key in a workflow, or the full name if the "name" key
-# is provided for job. Probably, the "name" key should be kept empty to keep things short
 ref, check_name, check_regexp, token, wait, workflow_name = ARGV
 
 GithubChecksVerifier.configure do |config|

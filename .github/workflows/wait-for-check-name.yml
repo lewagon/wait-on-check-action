@@ -1,10 +1,8 @@
-name: Wait using check-name
+name: Wait for check name
 on:
   pull_request:
     types: [opened, synchronize]
   push:
-    tags:
-      - 'test-using-check-name/v*' # e.g. test-using-check-name/v1_2_3
   workflow_dispatch:
 
 jobs:
@@ -22,11 +20,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10 # seconds
           running-workflow-name: wait-for-check-name
-          check-name: simple-task
-
-      - name: Delete tag
-        run: git push --delete origin ${{ github.ref }}
-        if: ${{ contains(github.ref, 'test-using-check-name') }}
+          check-name: wait-on-me
 
       - name: Success
-        run: echo 'success!'
+        run: echo 'Success!'
