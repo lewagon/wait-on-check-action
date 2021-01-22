@@ -1,11 +1,7 @@
 name: Workflow to wait on
-
 on:
   pull_request:
     types: [opened, synchronize]
-  push:
-    branches:
-      - master
   workflow_dispatch:
     inputs:
       delay_seconds:
