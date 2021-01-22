@@ -4,12 +4,14 @@ on:
   pull_request:
     types: [opened, synchronize]
   push:
+    branches:
+      - master
   workflow_dispatch:
     inputs:
       delay_seconds:
         description: 'Time to delay'
         required: false
-        default: 120
+        default: "120"
 
 jobs:
   wait-on-me:
@@ -18,7 +20,8 @@ jobs:
     steps:
       - name: Do some busywork
         env:
-          input_delay: ${{ github.event.inputs.delay_seconds }} || 120
+          default_delay: "120"
+          input_delay: $default_delay || ${{ github.event.inputs.delay_seconds }}
         run: echo "Doing busywork"; sleep $input_delay
 
       - name: Report success
