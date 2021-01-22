@@ -1,5 +1,4 @@
 name: RSpec tests
-
 on:
   push:
     paths-ignore:
@@ -13,16 +12,12 @@ on:
 jobs:
   run-specs:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-
       - uses: actions/setup-ruby@v1
         with:
           ruby-version: '2.7'
-
       - name: Install dependencies
         run: bundle install
-
       - name: Run tests
         run: cd app && bundle exec rspec
