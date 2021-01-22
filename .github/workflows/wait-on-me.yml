@@ -21,8 +21,10 @@ jobs:
       - name: Do some busywork
         env:
           default_delay: "120"
-          input_delay: $default_delay || ${{ github.event.inputs.delay_seconds }}
-        run: echo "Doing busywork"; sleep $input_delay
+          input_delay: ${{ github.event.inputs.delay_seconds }}
+        run: |
+          [ "$input_delay" ] && sleep_for="$input_delay" || sleep_for="$default_delay"
+          sleep $sleep_for
 
       - name: Report success
         run: echo 'Done with busywork'
