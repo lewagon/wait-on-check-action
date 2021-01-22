@@ -13,6 +13,10 @@ jobs:
   wait-on-me:
     runs-on: ubuntu-latest
     steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
       - name: Do some busywork
         env:
           default_delay: "120"

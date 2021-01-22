@@ -18,7 +18,7 @@ jobs:
       - name: Wait on tests
         uses: ./
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.sha }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10 # seconds
           running-workflow-name: wait-for-check-name
