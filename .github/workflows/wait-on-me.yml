@@ -6,8 +6,7 @@ on:
         description: "Time to delay"
         required: false
         default: "120"
-  pull_request:
-    types: [opened, synchronize]
+  push:
 
 jobs:
   wait-on-me:
