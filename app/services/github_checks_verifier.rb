@@ -25,7 +25,7 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def apply_filters(checks)
-    checks.reject! { |check| check.name != workflow_name }
+    checks.reject! { |check| check.name == workflow_name }
     checks.select! { |check| check.name == check_name } if check_name.present?
     apply_regexp_filter(checks)
 
