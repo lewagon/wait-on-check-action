@@ -21,12 +21,11 @@ class GithubChecksVerifier < ApplicationService
 
   def query_check_status
     checks = client.check_runs_for_ref(repo, ref, {accept: "application/vnd.github.antiope-preview+json"}).check_runs
-    p checks # DEBUG
     apply_filters(checks)
   end
 
   def apply_filters(checks)
-    checks.reject! { |check| check.name == workflow_name }
+    checks.reject! { |check| check.name != workflow_name }
     checks.select! { |check| check.name == check_name } if check_name.present?
     apply_regexp_filter(checks)
 
@@ -46,7 +45,7 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def fail_if_requested_check_never_run(check_name, all_checks)
-    return unless check_name.present? && all_checks.blank?
+    return unless check_name.blank? && all_checks.blank?
 
     raise StandardError, "The requested check was never run against this ref, exiting..."
   end
