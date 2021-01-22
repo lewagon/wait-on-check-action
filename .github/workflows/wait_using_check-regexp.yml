@@ -1,12 +1,12 @@
-name: Wait using check-name
+name: Wait using check-regexp
 on:
+  pull_request:
+    types: [opened, synchronize]
   push:
     tags:
-      - 'test-using-check-name/v*' # e.g. test-using-check-name/v1_2_3
-  workflow_dispatch:
-
+      - 'test-using-regexp/v*' # e.g. test-using-regexp/v1_2_3
 jobs:
-  wait-for-check-name:
+  wait-for-check-regexp:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,15 +16,15 @@ jobs:
       - name: Wait on tests
         uses: ./
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.sha }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10 # seconds
-          running-workflow-name: wait-for-check-name
-          check-name: simple-task
+          running-workflow-name: wait-for-check-regexp
+          check-regexp: .?-task
 
       - name: Delete tag
         run: git push --delete origin ${{ github.ref }}
-        if: ${{ contains(github.ref, 'test-using-check-name') }}
+        if: ${{ contains(github.ref, 'test-using-regexp') }}
 
       - name: Success
         run: echo 'success!'

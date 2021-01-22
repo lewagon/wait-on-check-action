@@ -10,6 +10,10 @@ inputs:
     description: "A name of a check that has to pass"
     required: false
     default: ""
+  check-regexp:
+    description: "Filter checks to wait using Regexp"
+    required: false
+    default: ""
   repo-token:
     description: "A GitHub token for the repo"
     required: false
@@ -28,6 +32,7 @@ runs:
   args:
     - ${{ inputs.ref }}
     - ${{ inputs.check-name }}
+    - ${{ inputs.check-regexp }}
     - ${{ inputs.repo-token }}
     - ${{ inputs.wait-interval }}
     - ${{ inputs.running-workflow-name }}

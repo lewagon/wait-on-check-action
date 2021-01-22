@@ -1,5 +1,7 @@
 name: Wait omitting check-name
 on:
+  pull_request:
+    types: [opened, synchronize]
   push:
     tags:
       - 'test-omitting-check-name/v*' # e.g. test-omitting-check-name/v1_2_3
@@ -16,7 +18,7 @@ jobs:
       - name: Wait on tests
         uses: ./
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.sha }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10 # seconds
           running-workflow-name: wait-omitting-check-name
