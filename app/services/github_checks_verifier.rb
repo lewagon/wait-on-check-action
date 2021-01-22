@@ -45,7 +45,7 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def fail_if_requested_check_never_run(check_name, all_checks)
-    return unless check_name.present? && all_checks.blank?
+    return unless check_name.blank? && all_checks.blank?
 
     raise StandardError, "The requested check was never run against this ref, exiting..."
   end
