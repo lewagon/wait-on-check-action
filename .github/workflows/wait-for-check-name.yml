@@ -1,10 +1,6 @@
 name: Wait for check name
 on:
-  pull_request:
-    types: [opened, synchronize]
   push:
-    branches:
-      - master
   workflow_dispatch:
 
 jobs:
@@ -12,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}

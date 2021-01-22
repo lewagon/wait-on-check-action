@@ -1,10 +1,8 @@
 name: Wait using check-regexp
 on:
-  pull_request:
-    types: [opened, synchronize]
+  workflow_dispatch:
   push:
-    tags:
-      - 'test-using-regexp/v*' # e.g. test-using-regexp/v1_2_3
+  
 jobs:
   wait-for-check-regexp:
     runs-on: ubuntu-latest
@@ -21,10 +19,6 @@ jobs:
           wait-interval: 10 # seconds
           running-workflow-name: wait-for-check-regexp
           check-regexp: .?-task
-
-      - name: Delete tag
-        run: git push --delete origin ${{ github.ref }}
-        if: ${{ contains(github.ref, 'test-using-regexp') }}
 
       - name: Success
         run: echo 'success!'

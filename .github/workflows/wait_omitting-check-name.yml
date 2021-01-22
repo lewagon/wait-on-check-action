@@ -1,11 +1,7 @@
 name: Wait omitting check-name
 on:
-  pull_request:
-    types: [opened, synchronize]
-  push:
-    tags:
-      - 'test-omitting-check-name/v*' # e.g. test-omitting-check-name/v1_2_3
   workflow_dispatch:
+  push:
 
 jobs:
   wait-omitting-check-name:
@@ -22,10 +18,6 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10 # seconds
           running-workflow-name: wait-omitting-check-name
-
-      - name: Delete tag
-        run: git push --delete origin ${{ github.ref }}
-        if: ${{ contains(github.ref, 'test-omitting-check-name') }}
 
       - name: Success
         run: echo 'success!'
