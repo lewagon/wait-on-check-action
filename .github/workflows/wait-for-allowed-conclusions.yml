@@ -1,0 +1,28 @@
+name: Wait using allowed_conclusions
+on:
+  workflow_dispatch:
+
+jobs:
+  skipped_job:
+    runs-on: ubuntu-latest
+    if: false
+    steps:
+      - name: Should not be executed
+        run: echo 'should not be executed'
+
+  wait-for-skipped-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Wait on tests
+        uses: ./
+        with:
+          ref: ${{ github.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          running-workflow-name: wait-for-skipped-job
+          check-name: 'skipped_job'
+          allowed-conclusions: ['skipped']
+
+      - name: Success
+        run: echo 'success!'
