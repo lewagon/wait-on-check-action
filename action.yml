@@ -26,6 +26,11 @@ inputs:
     description: "Name of the workflow to be ignored (the one who is waiting for the rest)"
     required: false
     default: ""
+  allowed-conclusions:
+    description: "Array of allowed conclusions"
+    required: false
+    default: success,skipped
+
 runs:
   using: "docker"
   image: "Dockerfile"
@@ -36,6 +41,7 @@ runs:
     - ${{ inputs.repo-token }}
     - ${{ inputs.wait-interval }}
     - ${{ inputs.running-workflow-name }}
+    - ${{ inputs.allowed-conclusions }}
 branding:
   icon: "check-circle"
   color: "green"

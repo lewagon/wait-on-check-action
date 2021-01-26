@@ -149,6 +149,37 @@ jobs:
         run: echo 'success!'
 ```
 
+### Allow other conclusions
+
+By default, checks that conclude with either `success` or `skipped` are allowed, and anything else is not.
+You may configure this with the `allowed-conclusions` option, which is a comma-separated list of conclusions.
+
+Example:
+
+```yml
+name: Waiting for checks
+
+on:
+  push:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Wait on tests
+        uses: lewagon/wait-on-check-action@master
+        with:
+          ref: ${{ github.ref }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+          running-workflow-name: 'deploy'
+          allowed-conclusions: success,skipped,cancelled
+
+      - name: Step to deploy
+        run: echo 'success!'
+```
+
 ### How to use the test workflows
 
 There are a few basic sample workflows in the `.github/workflows` directory. Two of them are just simple tasks that print something to the console. They are there just to emulate "real world" actions being executed that have to be waited. The important workflow are the ones that use the hereby implemented wait-on-check-action.
