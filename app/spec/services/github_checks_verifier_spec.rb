@@ -111,7 +111,7 @@ describe GithubChecksVerifier do
   
       expect do
         service.fail_unless_all_conclusions_allowed(all_checks)
-      end.not_to raise_error()
+      end.not_to raise_error
     end
   end
 
