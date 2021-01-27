@@ -22,7 +22,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           running-workflow-name: wait-for-skipped-job
           check-name: 'skipped_job'
-          allowed-conclusions: ['skipped']
+          allowed-conclusions: skipped
 
       - name: Success
         run: echo 'success!'
