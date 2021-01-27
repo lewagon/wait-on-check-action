@@ -1,6 +1,7 @@
 name: Wait using allowed_conclusions
 on:
   workflow_dispatch:
+  push:
 
 jobs:
   skipped_job:
