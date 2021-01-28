@@ -4,13 +4,7 @@ require 'spec_helper'
 require 'ostruct'
 
 describe GithubChecksVerifier do
-  let(:service) do
-    described_class.new
-  end
-
-  before do
-    described_class.config.allowed_conclusions = %w[success skipped]
-  end
+  let(:service) { described_class.new }
 
   describe '#call' do
     before { allow(service).to receive(:wait_for_checks).and_raise(StandardError, 'test error') }
@@ -111,10 +105,22 @@ describe GithubChecksVerifier do
                          'skipped. This can be configured with the \'allowed-conclusions\' param.')
     end
 
-    it 'does not raise an exception if all checks conlusions are allowed' do
+    it 'success and skipped are allowed by default' do
       all_checks = [
         OpenStruct.new(name: 'test', status: 'completed', conclusion: 'success'),
         OpenStruct.new(name: 'test', status: 'completed', conclusion: 'skipped')
+      ]
+
+      expect do
+        service.fail_unless_all_conclusions_allowed(all_checks)
+      end.not_to raise_error
+    end
+
+    it 'does not raise an exception if all checks conlusions are allowed' do
+      described_class.config.allowed_conclusions = %w[success cancelled]
+      all_checks = [
+        OpenStruct.new(name: 'test', status: 'completed', conclusion: 'success'),
+        OpenStruct.new(name: 'test', status: 'completed', conclusion: 'cancelled')
       ]
 
       expect do
