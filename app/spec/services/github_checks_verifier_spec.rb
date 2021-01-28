@@ -3,8 +3,12 @@ require "ostruct"
 
 describe GithubChecksVerifier do
   let(:service) do
-    described_class.config.client = Octokit::Client.new
     described_class.new
+  end
+
+  before do
+    described_class.config.client = Octokit::Client.new
+    described_class.config.allowed_conclusions = ["success", "skipped"]
   end
 
   describe "#call" do
@@ -87,16 +91,27 @@ describe GithubChecksVerifier do
     end
   end
 
-  describe "#fail_unless_all_success" do
-    it "raises an exception if some check is not successful" do
+  describe "#fail_unless_all_conclusions_allowed" do
+    it "raises an exception if some check conclusion is not allowed" do
       all_checks = [
         OpenStruct.new(name: "test", status: "completed", conclusion: "success"),
         OpenStruct.new(name: "test", status: "completed", conclusion: "failure")
       ]
 
       expect do
-        service.fail_unless_all_success(all_checks)
-      end.to raise_error(StandardError, "One or more checks were not successful, exiting...")
+        service.fail_unless_all_conclusions_allowed(all_checks)
+      end.to raise_error(StandardError, 'The conclusion of one or more checks were not allowed. Allowed conclusions are: success, skipped. This can be configured with the \'allowed-conclusions\' param.')
+    end
+
+    it "does not raise an exception if all checks conlusions are allowed" do
+      all_checks = [
+        OpenStruct.new(name: "test", status: "completed", conclusion: "success"),
+        OpenStruct.new(name: "test", status: "completed", conclusion: "skipped")
+      ]
+  
+      expect do
+        service.fail_unless_all_conclusions_allowed(all_checks)
+      end.not_to raise_error
     end
   end
 

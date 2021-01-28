@@ -11,6 +11,7 @@ class GithubChecksVerifier < ApplicationService
   config_accessor :check_name, :workflow_name, :client, :repo, :ref
   config_accessor(:wait) { 30 } # set a default
   config_accessor(:check_regexp) { "" }
+  config_accessor(:allowed_conclusions) { ["success", "skipped"] }
 
   def call
     wait_for_checks
@@ -45,16 +46,20 @@ class GithubChecksVerifier < ApplicationService
     check_name.present? || check_regexp.present?
   end
 
+  def check_conclusion_allowed(check)
+    allowed_conclusions.include? check.conclusion
+  end
+
   def fail_if_requested_check_never_run(check_name, all_checks)
     return unless check_name.present? && all_checks.blank?
 
     raise StandardError, "The requested check was never run against this ref, exiting..."
   end
 
-  def fail_unless_all_success(checks)
-    return if checks.all? { |check| check.conclusion == "success" }
+  def fail_unless_all_conclusions_allowed(checks)
+    return if checks.all? { |check| check_conclusion_allowed(check) }
 
-    raise StandardError, "One or more checks were not successful, exiting..."
+    raise StandardError, "The conclusion of one or more checks were not allowed. Allowed conclusions are: #{allowed_conclusions.join(', ')}. This can be configured with the 'allowed-conclusions' param."
   end
 
   def show_checks_conclusion_message(checks)
@@ -78,6 +83,6 @@ class GithubChecksVerifier < ApplicationService
 
     show_checks_conclusion_message(all_checks)
 
-    fail_unless_all_success(all_checks)
+    fail_unless_all_conclusions_allowed(all_checks)
   end
 end
