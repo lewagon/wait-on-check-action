@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
 require_relative './app/services/github_checks_verifier'
 require 'octokit'
 
