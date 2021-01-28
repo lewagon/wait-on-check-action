@@ -1,0 +1,37 @@
+# This is the configuration used to check the rubocop source code.
+
+require: rubocop-rspec
+AllCops:
+  Exclude:
+    - 'spec/spec_helper.rb'
+    - 'Gemfile'
+
+RSpec/BeforeAfterAll:
+  Enabled: true
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Layout/LineLength:
+  Max: 120
+  IgnoredPatterns: ['(\A|\s)#']
+
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+RSpec/EmptyLineAfterFinalLet:
+  Enabled: false
