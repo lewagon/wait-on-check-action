@@ -1,15 +1,16 @@
 # frozen_string_literal: true
-require "ostruct"
-require "json"
+
+require 'ostruct'
+require 'json'
 module Helpers
-  SAMPLE_RESPONSES_BASE_PATH = "spec/github_api_sample_responses/"
+  SAMPLE_RESPONSES_BASE_PATH = 'spec/github_api_sample_responses/'
 
   def load_json_sample(file_name)
     File.read(SAMPLE_RESPONSES_BASE_PATH + file_name)
   end
 
   def load_checks_from_yml(yml_file)
-    JSON.parse(load_json_sample(yml_file))["check_runs"].map { |check| OpenStruct.new(check) }
+    JSON.parse(load_json_sample(yml_file))['check_runs'].map { |check| OpenStruct.new(check) }
   end
 
   def mock_api_response(checks)

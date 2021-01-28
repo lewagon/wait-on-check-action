@@ -1,27 +1,27 @@
 # frozen_string_literal: true
 
-require_relative "./application_service"
-require "active_support/configurable"
+require_relative './application_service'
+require 'active_support/configurable'
 
-require "json"
-require "octokit"
+require 'json'
+require 'octokit'
 
 class GithubChecksVerifier < ApplicationService
   include ActiveSupport::Configurable
   config_accessor :check_name, :workflow_name, :client, :repo, :ref
   config_accessor(:wait) { 30 } # set a default
-  config_accessor(:check_regexp) { "" }
-  config_accessor(:allowed_conclusions) { ["success", "skipped"] }
+  config_accessor(:check_regexp) { '' }
+  config_accessor(:allowed_conclusions) { %w[success skipped] }
 
   def call
     wait_for_checks
-  rescue => e
+  rescue StandardError => e
     puts e.message
     exit(false)
   end
 
   def query_check_status
-    checks = client.check_runs_for_ref(repo, ref, {accept: "application/vnd.github.antiope-preview+json"}).check_runs
+    checks = client.check_runs_for_ref(repo, ref, { accept: 'application/vnd.github.antiope-preview+json' }).check_runs
     p checks # DEBUG
     apply_filters(checks)
   end
@@ -39,7 +39,7 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def all_checks_complete(checks)
-    checks.all? { |check| check.status == "completed" }
+    checks.all? { |check| check.status == 'completed' }
   end
 
   def filters_present?
@@ -53,7 +53,7 @@ class GithubChecksVerifier < ApplicationService
   def fail_if_requested_check_never_run(check_name, all_checks)
     return unless check_name.present? && all_checks.blank?
 
-    raise StandardError, "The requested check was never run against this ref, exiting..."
+    raise StandardError, 'The requested check was never run against this ref, exiting...'
   end
 
   def fail_unless_all_conclusions_allowed(checks)
@@ -63,8 +63,8 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def show_checks_conclusion_message(checks)
-    puts "Checks completed:"
-    puts checks.reduce("") { |message, check|
+    puts 'Checks completed:'
+    puts checks.reduce('') { |message, check|
       "#{message}#{check.name}: #{check.status} (#{check.conclusion})\n"
     }
   end
