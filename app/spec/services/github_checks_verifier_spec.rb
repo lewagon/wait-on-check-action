@@ -9,7 +9,6 @@ describe GithubChecksVerifier do
   end
 
   before do
-    described_class.config.client = Octokit::Client.new
     described_class.config.allowed_conclusions = %w[success skipped]
   end
 
@@ -23,13 +22,16 @@ describe GithubChecksVerifier do
 
   describe '#wait_for_checks' do
     it 'waits until all checks are completed' do
+      all_successful_checks = load_checks_from_yml('all_checks_successfully_completed.json')
+      described_class.config.client = instance_double(
+        Octokit::Client,
+        check_runs_for_ref: OpenStruct.new(check_runs: all_successful_checks)
+      )
       cycles = 1 # simulates the method waiting for one cyecle
       allow(service).to receive(:all_checks_complete) do
         (cycles -= 1) && cycles.negative?
       end
 
-      all_successful_checks = load_checks_from_yml('all_checks_successfully_completed.json')
-      mock_api_response(all_successful_checks)
       service.workflow_name = 'invoking_check'
       service.wait = 0
       output = with_captured_stdout { service.wait_for_checks }
@@ -48,7 +50,7 @@ describe GithubChecksVerifier do
              )).to be true
     end
 
-    context 'some checks (apart from the invoking one) are not complete' do
+    context 'when some checks (apart from the invoking one) are not complete' do
       it 'false if some check still queued' do
         expect(service.all_checks_complete(
                  [
@@ -72,8 +74,10 @@ describe GithubChecksVerifier do
   describe '#query_check_status' do
     it 'filters out the invoking check' do
       all_checks = load_checks_from_yml('all_checks_results.json')
-      mock_api_response(all_checks)
-
+      described_class.config.client = instance_double(
+        Octokit::Client,
+        check_runs_for_ref: OpenStruct.new(check_runs: all_checks)
+      )
       service.config.workflow_name = 'invoking_check'
 
       result = service.query_check_status
@@ -103,7 +107,8 @@ describe GithubChecksVerifier do
       expect do
         service.fail_unless_all_conclusions_allowed(all_checks)
       end.to raise_error(StandardError,
-                         'The conclusion of one or more checks were not allowed. Allowed conclusions are: success, skipped. This can be configured with the \'allowed-conclusions\' param.')
+                         'The conclusion of one or more checks were not allowed. Allowed conclusions are: success, '\
+                         'skipped. This can be configured with the \'allowed-conclusions\' param.')
     end
 
     it 'does not raise an exception if all checks conlusions are allowed' do
@@ -178,6 +183,7 @@ describe GithubChecksVerifier do
   end
 
   describe '#apply_regexp_filter' do
+    # rubocop: disable RSpec/MultipleExpectations
     it 'simple regexp' do
       checks = [
         OpenStruct.new(name: 'check_name', status: 'queued'),
@@ -203,5 +209,6 @@ describe GithubChecksVerifier do
       expect(checks.map(&:name)).not_to include('other_check')
       expect(checks.map(&:name)).to include('test@example.com')
     end
+    # rubocop: enable RSpec/MultipleExpectations
   end
 end

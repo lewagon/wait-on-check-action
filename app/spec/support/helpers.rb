@@ -13,11 +13,6 @@ module Helpers
     JSON.parse(load_json_sample(yml_file))['check_runs'].map { |check| OpenStruct.new(check) }
   end
 
-  def mock_api_response(checks)
-    response = double(check_runs: checks)
-    allow_any_instance_of(Octokit::Client).to receive(:check_runs_for_ref) { response }
-  end
-
   def with_captured_stdout
     original_stdout = $stdout  # capture previous value of $stdout
     $stdout = StringIO.new     # assign a string buffer to $stdout
