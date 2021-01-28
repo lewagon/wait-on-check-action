@@ -3,25 +3,8 @@
 require: rubocop-rspec
 AllCops:
   Exclude:
-    - 'spec/spec_helper.rb'
+    - 'app/spec/spec_helper.rb'
     - 'Gemfile'
-
-RSpec/BeforeAfterAll:
-  Enabled: true
-
-RSpec/ExampleLength:
-  Enabled: false
-
-RSpec/MultipleMemoizedHelpers:
-  Enabled: false
-
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - 'spec/**/*.rb'
-
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/**/*.rb'
 
 Layout/LineLength:
   Max: 120
@@ -30,8 +13,28 @@ Layout/LineLength:
 Lint/AmbiguousBlockAssociation:
   Enabled: false
 
-Style/Documentation:
+Metrics/BlockLength:
+  Exclude:
+    - 'app/spec/**/*.rb'
+
+RSpec/BeforeAfterAll:
+  Enabled: true
+
+RSpec/DescribeClass:
   Enabled: false
 
 RSpec/EmptyLineAfterFinalLet:
   Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'app/spec/**/*.rb'
