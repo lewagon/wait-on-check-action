@@ -3,9 +3,6 @@
 require_relative './application_service'
 require 'active_support/configurable'
 
-require 'json'
-require 'octokit'
-
 class GithubChecksVerifier < ApplicationService
   include ActiveSupport::Configurable
   config_accessor :check_name, :workflow_name, :client, :repo, :ref
