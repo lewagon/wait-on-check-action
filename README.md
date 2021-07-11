@@ -226,8 +226,6 @@ jobs:
 
 There are sample workflows in the `.github/workflows` directory. Two of them are logging tasks to emulate real-world actions being executed that have to be waited. The important workflows are the ones that use the wait-on-check-action.
 
-To run the tests, fork the repo and locally run the script at `.github/trigger-scripts/trigger-test-workflows.sh`. This script creates a couple of tags in your forked repo (make sure you use `origin` as your remote). These tags will trigger the aforementioned workflows which include a step to remove the created tag.
-
 A workflow named "wait_omitting-check-name" waits for the two simple-tasks, while the one named "wait_using_check-name" only waits for "simple-task".
 
 <!-- Links -->
