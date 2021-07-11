@@ -1,55 +1,117 @@
-![RSpec Tests](https://github.com/lewagon/wait-on-check-action/workflows/RSpec%20tests/badge.svg)
+# Wait On Check Action
 
-# Wait on Check action
+![RSpec Tests][rspec_shield]
 
-This action can be used to halt any workflow until required checks for a given git ref (branch, tag, or commit SHA) pass successfully. It uses [GitHub Check Runs API](https://developer.github.com/v3/checks/runs/#list-check-runs-for-a-git-reference) to poll for a check result—until a check either succeeds or else.
+Pause a workflow until a job in another workflow completes successfully.
 
-On successful check, the action will yield control to next step.
-In any other case, the action will exit with status 1, failing the whole workflow.
+This action uses the [Checks API][checks_api] to poll for check results. On success, the action exit allowing the workflow resume. Otherwise, the action will exit with status code 1 and fail the whole workflow.
 
-:tada: It allows to work around a GitHub Actions limitation of non-interdependent _workflows_ (we can only depend on `job`s [inside a single workflow](https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idneeds)).
+This is a workaround to GitHub's limitation of non-interdependent workflows :tada:
 
-In other words, you can **run your workflows in parallel** and only proceed with workflow B after workflow A completes and reports success.
+You can **run your workflows in parallel** and pause a job until a job in another workflow completes successfully.
 
-### A real-world scenario
-
-- A push to master triggers a `test` workflow that runs tests on application code.
-- A push to master triggers a webhook that builds an image on external service (Quay, DockerHub, etc.)
-- Once the image is built, a `repository_dispatch` hook is triggered from a third-party service that launches a `deploy` workflow.
-- We don't want the `deploy` workflow to succeed until we're sure that the `master` branch is green in `test` workflow.
-- We add the "Wait on tests" step to make sure `deploy` does not succeed before `test` for a master branch.
-
-#### Example workflow code
+## Minimal example
 
 ```yml
-# .github/workflows/deploy-dispatch.yml
-name: Trigger deploy on external event
+name: Test
+
+on: [push]
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+      steps:
+        ...
+```
+
+```yml
+name: Publish
+
+on: [push]
+
+jobs:
+  publish:
+    name: Publish the package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for tests to succeed
+        uses: lewagon/wait-on-check-action@v0.2
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'Run tests'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+      ...
+```
+
+## Alternatives
+
+If you can keep the dependent jobs in a single workflow:
+
+```yml
+name: Test and publish
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps: ...
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: test
+    steps: ...
+```
+
+If you can run dependent jobs in a separate workflows in series:
+
+```yml
+name: Publish
+
 on:
+  workflow_run:
+    workflows: ['Test']
+    types:
+      - completed
+```
+
+## A real-world scenario
+
+- Pushes to master trigger a `test` job to be run against the application code.
+
+- Pushes to master also trigger a webhook that builds an image on external service such as Quay.
+
+- Once an image is built, a `repository_dispatch` hook is triggered from a third-party service. This triggers a `deploy` job.
+
+- We don't want the `deploy` job to start until the master branch passes its `test` job.
+
+```yml
+name: Trigger deployment on external event
+
+on:
+  # https://github.com/lewagon/quay-github-actions-dispatch
   repository_dispatch:
     types: [build_success]
 
 jobs:
   deploy:
-    # see https://github.com/lewagon/quay-github-actions-dispatch for use-case
     if: startsWith(github.sha, github.event.client_payload.text)
-    name: Deploy new image
+    name: Deploy a new image
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
 
-      # This step will retry until required check passes
-      # and will fail the whole workflow if the check conclusion is not a success
-      - name: Wait on tests
-        # or lewagon/wait-on-check-action@master, but master is not guaranteed to be stable ATM
+      - name: Wait for tests to succeed
         uses: lewagon/wait-on-check-action@v0.2
         with:
-          ref: master # can be commit SHA or tag too
-          check-name: test # name of the existing check - omit to wait for all checks
+          ref: master
+          check-name: test
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 20 # seconds
+          wait-interval: 20
 
-      # Deploy step
-      - name: Save DigitalOcean kubeconfig
+      - name: Save the DigitalOcean kubeconfig
         uses: digitalocean/action-doctl@master
         env:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
@@ -60,29 +122,15 @@ jobs:
         run: export KUBECONFIG=$GITHUB_WORKSPACE/.kubeconfig && make deploy latest_sha=$(echo $GITHUB_SHA | head -c7)}}
 ```
 
-### Figruring out check name
+## Parameters
 
-```
-curl -X GET https://api.github.com/repos/OWNER/REPO/commits/REF/check-runs \
--H 'Accept: application/vnd.github.antiope-preview+json' \
--H 'Authorization: token GITHUB_REPO_READ_TOKEN' | jq '[.check_runs[].name]'
-```
+### Check name
 
-To figure out a check name—use the `curl` command above.
-Note that by default this will be a value of `jobs` key, unless the `name` is provided.
+Check name goes according to the jobs.<job_id>.name parameter.
+
+In this case the job's name is 'test':
 
 ```yml
-# .github/workflows/test.yml
-name: Rspec
-on:
-  push:
-    branches:
-      - master
-  # Will run once the PR is opened or a new commit is pushed against it
-  pull_request:
-    types:
-      - opened
-      - synchronize
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -90,102 +138,99 @@ jobs:
       ...
 ```
 
-:point_up: Name is `test`.
+In this case the name is 'Run tests':
 
 ```yml
-# .github/workflows/test.yml
-name: Rspec
-on:
-  push:
-    branches:
-      - master
-  # Will run once the PR is opened or a new commit is pushed against it
-  pull_request:
-    types:
-      - opened
-      - synchronize
 jobs:
   test:
-    name: "My test workflow"
+    name: Run tests
     runs-on: ubuntu-latest
       steps:
       ...
 ```
 
-:point_up: Name is `My test workflow`
+In this case the names will be:
 
+- Run tests (3.6)
 
-### Waiting for a specific check to finish OR waiting for all checks to finish
-
-There are two variables to have in mind:
-- `check-name`: Name of the check we want to wait to finish before continuing.
-- `running-workflow-name`: Name of the check that will wait for the rest.
-
-The first one is optional. If provided, the second one is not needed.
-If none of them is given, the check will wait "forever" because it will be waiting for itself to finish.
-
-Example:
+- Run tests (3.7)
 
 ```yml
-name: Waiting for checks and deploy
-
-on:
-  push:
-
 jobs:
-  deploy: # This name is the one to be used in `running-workflow-name`
+  test:
+    name: Run tests
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Wait on tests
-        uses: lewagon/wait-on-check-action@master
-        with:
-          ref: ${{ github.ref }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-          running-workflow-name: 'deploy' # HERE
-
-      - name: Step to deploy
-        run: echo 'success!'
+    strategy:
+      matrix:
+        python: [3.6, 3.7]
 ```
 
-### Allow other conclusions
+To inspect the names as they appear to the API:
 
-By default, checks that conclude with either `success` or `skipped` are allowed, and anything else is not.
-You may configure this with the `allowed-conclusions` option, which is a comma-separated list of conclusions.
-
-Example:
-
-```yml
-name: Waiting for checks
-
-on:
-  push:
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Wait on tests
-        uses: lewagon/wait-on-check-action@master
-        with:
-          ref: ${{ github.ref }}
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-          running-workflow-name: 'deploy'
-          allowed-conclusions: success,skipped,cancelled
-
-      - name: Step to deploy
-        run: echo 'success!'
-```
-
-### How to use the test workflows
-
-There are a few basic sample workflows in the `.github/workflows` directory. Two of them are just simple tasks that print something to the console. They are there just to emulate "real world" actions being executed that have to be waited. The important workflow are the ones that use the hereby implemented wait-on-check-action.
-To watch them in action, you'll need to fork the repo and, from your local computer, run the bash script included in `.github/trigger-scripts` directory:
 ```bash
-.github/trigger-scripts/trigger-test-workflows.sh
+curl -i -u username:$token \
+https://api.github.com/repos/OWNER/REPO/commits/REF/check-runs \
+-H 'Accept: application/vnd.github.antiope-preview+json' | jq '[.check_runs[].name]'
 ```
-This script creates a couple of tags in your forked repo (make sure you use `origin` as your remote) that will trigger the mentioned workflows. These include a step to remove the created tag.
-You'll see that the workflow named "wait_omitting-check-name" waits for the two simple-tasks, while the one named "wait_using_check-name" only waits for "simple-task".
+
+### Running workflow name
+
+If you would like to wait for all other checks to complete you may set `running-workflow-name` to the name of the current job and not set a `check-name` parameter.
+
+```yml
+name: Publish
+
+on: [push]
+
+jobs:
+  publish:
+    name: Publish the package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for other checks to succeed
+        uses: lewagon/wait-on-check-action@v0.2
+        with:
+          ref: ${{ github.ref }}
+          running-workflow-name: 'Publish the package'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+      ...
+```
+
+### Allowed conclusions
+
+By default, checks that conclude with either `success` or `skipped` are allowed, and anything else is not. You may configure this with the `allowed-conclusions` option, which is a comma-separated list of conclusions.
+
+```yml
+name: Publish
+
+on: [push]
+
+jobs:
+  publish:
+    name: Publish the package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for tests to succeed
+        uses: lewagon/wait-on-check-action@v0.2
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'Run tests'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+          allowed-conclusions: success,skipped,cancelled
+      ...
+```
+
+## Tests
+
+There are sample workflows in the `.github/workflows` directory. Two of them are logging tasks to emulate real-world actions being executed that have to be waited. The important workflows are the ones that use the wait-on-check-action.
+
+To run the tests, fork the repo and locally run the script at `.github/trigger-scripts/trigger-test-workflows.sh`. This script creates a couple of tags in your forked repo (make sure you use `origin` as your remote). These tags will trigger the aforementioned workflows which include a step to remove the created tag.
+
+A workflow named "wait_omitting-check-name" waits for the two simple-tasks, while the one named "wait_using_check-name" only waits for "simple-task".
+
+<!-- Links -->
+
+[rspec_shield]: https://github.com/lewagon/wait-on-check-action/workflows/RSpec%20tests/badge.svg
+[checks_api]: https://developer.github.com/v3/checks/runs/#list-check-runs-for-a-git-reference
