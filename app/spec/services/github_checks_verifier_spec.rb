@@ -82,12 +82,14 @@ describe GithubChecksVerifier do
 
   describe "#fail_if_requested_check_never_run" do
     it "raises an exception if check_name is not empty and all_checks is" do
-      check_name = 'test'
+      service.config.check_name = 'test'
       all_checks = []
+      allow(service).to receive(:query_check_status).and_return all_checks
 
+      expected_msg = "The requested check was never run against this ref, exiting..."
       expect do
-        service.fail_if_requested_check_never_run(check_name, all_checks)
-      end.to raise_error(StandardError, "The requested check was never run against this ref, exiting...")
+        service.call
+      end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
   end
 
@@ -97,10 +99,14 @@ describe GithubChecksVerifier do
         OpenStruct.new(name: "test", status: "completed", conclusion: "success"),
         OpenStruct.new(name: "test", status: "completed", conclusion: "failure")
       ]
+      allow(service).to receive(:query_check_status).and_return all_checks
 
+      expected_msg = "The conclusion of one or more checks were not allowed. Allowed conclusions are: "\
+                     "success, skipped. This can be configured with the 'allowed-conclusions' param."
       expect do
-        service.fail_unless_all_conclusions_allowed(all_checks)
-      end.to raise_error(StandardError, 'The conclusion of one or more checks were not allowed. Allowed conclusions are: success, skipped. This can be configured with the \'allowed-conclusions\' param.')
+        service.call
+      end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+
     end
 
     it "does not raise an exception if all checks conlusions are allowed" do
@@ -108,9 +114,10 @@ describe GithubChecksVerifier do
         OpenStruct.new(name: "test", status: "completed", conclusion: "success"),
         OpenStruct.new(name: "test", status: "completed", conclusion: "skipped")
       ]
-  
+      allow(service).to receive(:query_check_status).and_return all_checks
+
       expect do
-        service.fail_unless_all_conclusions_allowed(all_checks)
+        service.call
       end.not_to raise_error
     end
   end

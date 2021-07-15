@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "./application_service"
+require_relative "../errors/check_conclusion_not_allowed_error"
+require_relative "../errors/check_never_run_error"
 require "active_support/configurable"
 
 require "json"
@@ -15,7 +17,7 @@ class GithubChecksVerifier < ApplicationService
 
   def call
     wait_for_checks
-  rescue => e
+  rescue CheckNeverRunError, CheckConclusionNotAllowedError => e
     puts e.message
     exit(false)
   end
@@ -53,13 +55,13 @@ class GithubChecksVerifier < ApplicationService
   def fail_if_requested_check_never_run(check_name, all_checks)
     return unless check_name.present? && all_checks.blank?
 
-    raise StandardError, "The requested check was never run against this ref, exiting..."
+    raise CheckNeverRunError
   end
 
   def fail_unless_all_conclusions_allowed(checks)
     return if checks.all? { |check| check_conclusion_allowed(check) }
 
-    raise StandardError, "The conclusion of one or more checks were not allowed. Allowed conclusions are: #{allowed_conclusions.join(', ')}. This can be configured with the 'allowed-conclusions' param."
+    raise CheckConclusionNotAllowedError.new(allowed_conclusions)
   end
 
   def show_checks_conclusion_message(checks)
