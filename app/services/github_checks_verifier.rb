@@ -52,8 +52,8 @@ class GithubChecksVerifier < ApplicationService
     allowed_conclusions.include? check.conclusion
   end
 
-  def fail_if_requested_check_never_run(check_name, all_checks)
-    return unless check_name.present? && all_checks.blank?
+  def fail_if_requested_check_never_run(all_checks)
+    return unless filters_present? && all_checks.blank?
 
     raise CheckNeverRunError
   end
