@@ -74,7 +74,7 @@ class GithubChecksVerifier < ApplicationService
   def wait_for_checks
     all_checks = query_check_status
 
-    fail_if_requested_check_never_run(check_name, all_checks)
+    fail_if_requested_check_never_run(all_checks)
 
     until all_checks_complete(all_checks)
       plural_part = all_checks.length > 1 ? "checks aren't" : "check isn't"
