@@ -2,19 +2,13 @@ name: Wait using check-regexp
 on:
   workflow_dispatch:
   push:
-
+  
 jobs:
-  simple-task:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Simple task
-        run: echo 'done'
-
   wait-for-check-regexp:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
+      
       - name: Wait on tests
         uses: ./
         with:
