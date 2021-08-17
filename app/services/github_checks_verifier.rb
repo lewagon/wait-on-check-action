@@ -39,10 +39,7 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def apply_regexp_filter(checks)
-    p "Applying REGEXP filter"
-    p "Checks before filter: #{checks.map(&:name).join(", ")}"
     checks.select! { |check| check.name[Regexp.new(check_regexp)] } if check_regexp.present?
-    p "Checks after filter: #{checks.map(&:name).join(", ")}"
   end
 
   def all_checks_complete(checks)
