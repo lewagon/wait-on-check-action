@@ -186,7 +186,7 @@ describe GithubChecksVerifier do
         OpenStruct.new(name: "other_check", status: "queued")
       ]
 
-      service.check_regexp = Regexp.new('._check')
+      service.check_regexp = '.?_check'
       service.send(:apply_regexp_filter, checks)
 
       expect(checks.map(&:name)).to include("other_check")
@@ -199,7 +199,7 @@ describe GithubChecksVerifier do
         OpenStruct.new(name: "other_check", status: "queued")
       ]
 
-      service.check_regexp = Regexp.new('\A[\w.+-]+@\w+\.\w+\z')
+      service.check_regexp = '\A[\w.+-]+@\w+\.\w+\z'
       service.send(:apply_regexp_filter, checks)
 
       expect(checks.map(&:name)).not_to include("other_check")
