@@ -39,12 +39,8 @@ class GithubChecksVerifier < ApplicationService
     statuses = checks.map(&:status).uniq
     statuses.each do |status|
       print "Checks #{status}: "
-      puts checks.select { |check| check.status == status }.map { |check| log_check(check) }.join(", ")
+      puts checks.select { |check| check.status == status }.map(&:name).join(", ")
     end
-  end
-
-  def log_check(check)
-    "Name: #{check.name}, Status: #{check.status}"
   end
 
   def apply_filters(checks)
