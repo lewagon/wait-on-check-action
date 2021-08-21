@@ -27,13 +27,28 @@ class GithubChecksVerifier < ApplicationService
 
   def query_check_status
     checks = client.check_runs_for_ref(repo, ref, {accept: "application/vnd.github.antiope-preview+json"}).check_runs
+    log_checks(checks, "Checks running on ref:")
+
     apply_filters(checks)
+  end
+
+  def log_checks(checks, msg)
+    return unless verbose
+
+    puts msg
+    puts checks.map { |check| log_check(check) }.join("\n")
+  end
+
+  def log_check(check)
+    "Name: #{check.name}, Status: #{check.status}"
   end
 
   def apply_filters(checks)
     checks.reject! { |check| check.name == workflow_name }
     checks.select! { |check| check.name == check_name } if check_name.present?
+    log_checks(checks, "Checks after check_name filter:"
     apply_regexp_filter(checks)
+    log_checks(checks, "Checks after Regexp filter:"
 
     checks
   end
