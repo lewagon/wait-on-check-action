@@ -44,9 +44,9 @@ runs:
     - ${{ inputs.check-regexp }}
     - ${{ inputs.ref }}
     - ${{ inputs.repo-token }}
+    - ${{ inputs.verbose }}
     - ${{ inputs.wait-interval }}
     - ${{ inputs.running-workflow-name }}
-    - ${{ inputs.verbose }}
 branding:
   icon: "check-circle"
   color: "green"
