@@ -30,6 +30,10 @@ inputs:
     description: "Array of allowed conclusions"
     required: false
     default: success,skipped
+  verbose:
+    description: "Print logs if true"
+    required: false
+    default: true
 
 runs:
   using: "docker"
@@ -42,6 +46,7 @@ runs:
     - ${{ inputs.wait-interval }}
     - ${{ inputs.running-workflow-name }}
     - ${{ inputs.allowed-conclusions }}
+    - ${{ inputs.verbose }}
 branding:
   icon: "check-circle"
   color: "green"
