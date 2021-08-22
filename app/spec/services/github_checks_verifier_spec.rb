@@ -30,7 +30,7 @@ describe GithubChecksVerifier do
       mock_api_response(all_successful_checks)
       service.workflow_name = "invoking_check"
       service.wait = 0
-      output = with_captured_stdout{ service.call }
+      output = with_captured_stdout { service.call }
 
       expect(output).to include("The requested check isn't complete yet, will check back in #{service.wait} seconds...")
     end
@@ -79,14 +79,14 @@ describe GithubChecksVerifier do
 
   describe "#fail_if_requested_check_never_run" do
     it "raises an exception if check_name is not empty and all_checks is" do
-      service.config.check_name = 'test'
+      service.config.check_name = "test"
       all_checks = []
       allow(service).to receive(:query_check_status).and_return all_checks
 
       expected_msg = "The requested check was never run against this ref, exiting..."
-      expect do
+      expect {
         service.call
-      end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
   end
 
@@ -100,10 +100,9 @@ describe GithubChecksVerifier do
 
       expected_msg = "The conclusion of one or more checks were not allowed. Allowed conclusions are: "\
                      "success, skipped. This can be configured with the 'allowed-conclusions' param."
-      expect do
+      expect {
         service.call
-      end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
-
+      }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
 
     it "does not raise an exception if all checks conlusions are allowed" do
@@ -113,9 +112,9 @@ describe GithubChecksVerifier do
       ]
       allow(service).to receive(:query_check_status).and_return all_checks
 
-      expect do
+      expect {
         service.call
-      end.not_to raise_error
+      }.not_to raise_error
     end
   end
 
@@ -123,7 +122,7 @@ describe GithubChecksVerifier do
     it "prints successful message to standard output" do
       checks = [OpenStruct.new(name: "check_completed", status: "completed", conclusion: "success")]
       allow(service).to receive(:query_check_status).and_return checks
-      output = with_captured_stdout{ service.call }
+      output = with_captured_stdout { service.call }
 
       expect(output).to include("check_completed: completed (success)")
     end
@@ -138,7 +137,7 @@ describe GithubChecksVerifier do
 
       service.config.check_name = "check_name"
       service.send(:apply_filters, checks)
-      expect(checks.map(&:name)).to all( eq "check_name" )
+      expect(checks.map(&:name)).to all(eq "check_name")
     end
 
     it "does not filter by check_name if it's empty" do
@@ -186,7 +185,7 @@ describe GithubChecksVerifier do
         OpenStruct.new(name: "other_check", status: "queued")
       ]
 
-      service.check_regexp = '.?_check'
+      service.check_regexp = ".?_check"
       service.send(:apply_regexp_filter, checks)
 
       expect(checks.map(&:name)).to include("other_check")
