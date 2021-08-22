@@ -11,3 +11,4 @@ jobs:
       uses: andrewmcodes/standardrb-action@v0.0.2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        RUBY_VERSION: 2.7
