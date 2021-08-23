@@ -12,7 +12,7 @@ GithubChecksVerifier.configure do |config|
   config.repo = ENV["GITHUB_REPOSITORY"]
   config.wait = wait.to_i
   config.workflow_name = workflow_name
-  config.allowed_conclusions = allowed_conclusions.split(",").map(&:strip)
+  config.allowed_conclusions = allowed_conclusions.split(',').map(&:strip)
 end
 
 GithubChecksVerifier.call
