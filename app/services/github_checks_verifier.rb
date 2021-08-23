@@ -14,6 +14,7 @@ class GithubChecksVerifier < ApplicationService
   config_accessor(:wait) { 30 } # set a default
   config_accessor(:check_regexp) { "" }
   config_accessor(:allowed_conclusions) { ["success", "skipped"] }
+  config_accessor(:verbose) { true }
 
   def call
     wait_for_checks
@@ -26,14 +27,28 @@ class GithubChecksVerifier < ApplicationService
 
   def query_check_status
     checks = client.check_runs_for_ref(repo, ref, {accept: "application/vnd.github.antiope-preview+json"}).check_runs
-    p checks # DEBUG
+    log_checks(checks, "Checks running on ref:")
+
     apply_filters(checks)
+  end
+
+  def log_checks(checks, msg)
+    return unless verbose
+
+    puts msg
+    statuses = checks.map(&:status).uniq
+    statuses.each do |status|
+      print "Checks #{status}: "
+      puts checks.select { |check| check.status == status }.map(&:name).join(", ")
+    end
   end
 
   def apply_filters(checks)
     checks.reject! { |check| check.name == workflow_name }
     checks.select! { |check| check.name == check_name } if check_name.present?
+    log_checks(checks, "Checks after check_name filter:")
     apply_regexp_filter(checks)
+    log_checks(checks, "Checks after Regexp filter:")
 
     checks
   end
