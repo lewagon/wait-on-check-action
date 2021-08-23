@@ -6,9 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: StandardRB Linter
-      uses: andrewmcodes/standardrb-action@v0.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        RUBY_VERSION: 2.7
+      - name: standardrb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: amoeba/standardrb-action@v2
