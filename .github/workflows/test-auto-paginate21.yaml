@@ -1,0 +1,11 @@
+name: Simple Task
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  simple-task21:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Done
+        run: echo 'Done'
