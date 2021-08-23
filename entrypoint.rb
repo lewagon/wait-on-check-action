@@ -8,7 +8,7 @@ GithubChecksVerifier.configure do |config|
   config.allowed_conclusions = allowed_conclusions.split(",").map(&:strip)
   config.check_name = check_name
   config.check_regexp = check_regexp
-  config.client = Octokit::Client.new(access_token: token)
+  config.client = Octokit::Client.new(access_token: token, auto_paginate: true)
   config.ref = ref
   config.repo = ENV["GITHUB_REPOSITORY"]
   config.verbose = verbose
