@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'byebug'
+require "byebug"
 
-services = Dir['./services/**/*.rb']
+services = Dir["./services/**/*.rb"]
 services.sort.each { |f| require f }
 
-test_helpers = Dir['./spec/support/**/*.rb']
+test_helpers = Dir["./spec/support/**/*.rb"]
 test_helpers.sort.each { |f| require f }
 
 RSpec.configure do |config|
