@@ -3,9 +3,10 @@ name: "Wait on check"
 author: "progapandist"
 description: "Wait on a certain check to pass for commit"
 inputs:
-  ref:
-    description: "A git ref to be checked: branch/tag/commit sha"
-    required: true
+  allowed-conclusions:
+    description: "Array of allowed conclusions"
+    required: false
+    default: success,skipped
   check-name:
     description: "A name of a check that has to pass"
     required: false
@@ -14,6 +15,9 @@ inputs:
     description: "Filter checks to wait using Regexp"
     required: false
     default: ""
+  ref:
+    description: "A git ref to be checked: branch/tag/commit sha"
+    required: true
   repo-token:
     description: "A GitHub token for the repo"
     required: false
@@ -26,22 +30,23 @@ inputs:
     description: "Name of the workflow to be ignored (the one who is waiting for the rest)"
     required: false
     default: ""
-  allowed-conclusions:
-    description: "Array of allowed conclusions"
+  verbose:
+    description: "Print logs if true"
     required: false
-    default: success,skipped
+    default: true
 
 runs:
   using: "docker"
   image: "Dockerfile"
   args:
-    - ${{ inputs.ref }}
+    - ${{ inputs.allowed-conclusions }}
     - ${{ inputs.check-name }}
     - ${{ inputs.check-regexp }}
+    - ${{ inputs.ref }}
     - ${{ inputs.repo-token }}
+    - ${{ inputs.verbose }}
     - ${{ inputs.wait-interval }}
     - ${{ inputs.running-workflow-name }}
-    - ${{ inputs.allowed-conclusions }}
 branding:
   icon: "check-circle"
   color: "green"
