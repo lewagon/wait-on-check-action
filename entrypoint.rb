@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative "./app/services/github_checks_verifier.rb"
+require_relative "./app/services/github_checks_verifier"
 require "octokit"
 
 ref, check_name, check_regexp, token, wait, workflow_name, allowed_conclusions = ARGV
