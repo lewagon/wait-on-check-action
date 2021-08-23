@@ -2,7 +2,7 @@
 require_relative "./app/services/github_checks_verifier"
 require "octokit"
 
-allowed_conclusions, check_name, check_regexp, ref, token, verbose, wait, workflow_name  = ARGV
+allowed_conclusions, check_name, check_regexp, ref, token, verbose, wait, workflow_name = ARGV
 
 GithubChecksVerifier.configure do |config|
   config.allowed_conclusions = allowed_conclusions.split(",").map(&:strip)
