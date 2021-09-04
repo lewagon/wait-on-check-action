@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "./application_service"
+require_relative "../errors/check_conclusion_not_allowed_error"
+require_relative "../errors/check_never_run_error"
 require "active_support/configurable"
 
 require "json"
@@ -12,30 +14,49 @@ class GithubChecksVerifier < ApplicationService
   config_accessor(:wait) { 30 } # set a default
   config_accessor(:check_regexp) { "" }
   config_accessor(:allowed_conclusions) { ["success", "skipped"] }
+  config_accessor(:verbose) { true }
 
   def call
     wait_for_checks
-  rescue => e
+  rescue CheckNeverRunError, CheckConclusionNotAllowedError => e
     puts e.message
     exit(false)
   end
 
+  private
+
   def query_check_status
-    checks = client.check_runs_for_ref(repo, ref, {per_page: 100, accept: "application/vnd.github.antiope-preview+json"}).check_runs
-    p checks # DEBUG
+    checks = client.check_runs_for_ref(
+      repo, ref, {per_page: 100, accept: "application/vnd.github.antiope-preview+json"}
+    ).check_runs
+    log_checks(checks, "Checks running on ref:")
+
     apply_filters(checks)
+  end
+
+  def log_checks(checks, msg)
+    return unless verbose
+
+    puts msg
+    statuses = checks.map(&:status).uniq
+    statuses.each do |status|
+      print "Checks #{status}: "
+      puts checks.select { |check| check.status == status }.map(&:name).join(", ")
+    end
   end
 
   def apply_filters(checks)
     checks.reject! { |check| check.name == workflow_name }
     checks.select! { |check| check.name == check_name } if check_name.present?
+    log_checks(checks, "Checks after check_name filter:")
     apply_regexp_filter(checks)
+    log_checks(checks, "Checks after Regexp filter:")
 
     checks
   end
 
   def apply_regexp_filter(checks)
-    checks.select! { |check| check.name[check_regexp] } if check_regexp.present?
+    checks.select! { |check| check.name[Regexp.new(check_regexp)] } if check_regexp.present?
   end
 
   def all_checks_complete(checks)
@@ -50,16 +71,16 @@ class GithubChecksVerifier < ApplicationService
     allowed_conclusions.include? check.conclusion
   end
 
-  def fail_if_requested_check_never_run(check_name, all_checks)
-    return unless check_name.present? && all_checks.blank?
+  def fail_if_requested_check_never_run(all_checks)
+    return unless filters_present? && all_checks.blank?
 
-    raise StandardError, "The requested check was never run against this ref, exiting..."
+    raise CheckNeverRunError
   end
 
   def fail_unless_all_conclusions_allowed(checks)
     return if checks.all? { |check| check_conclusion_allowed(check) }
 
-    raise StandardError, "The conclusion of one or more checks were not allowed. Allowed conclusions are: #{allowed_conclusions.join(', ')}. This can be configured with the 'allowed-conclusions' param."
+    raise CheckConclusionNotAllowedError.new(allowed_conclusions)
   end
 
   def show_checks_conclusion_message(checks)
@@ -72,7 +93,7 @@ class GithubChecksVerifier < ApplicationService
   def wait_for_checks
     all_checks = query_check_status
 
-    fail_if_requested_check_never_run(check_name, all_checks)
+    fail_if_requested_check_never_run(all_checks)
 
     until all_checks_complete(all_checks)
       plural_part = all_checks.length > 1 ? "checks aren't" : "check isn't"

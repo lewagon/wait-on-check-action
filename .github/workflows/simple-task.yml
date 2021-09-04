@@ -1,0 +1,14 @@
+name: Simple Task
+on:
+  workflow_dispatch:
+  push:
+
+# wait-using-check-regexp waits for this task
+jobs:
+  simple-task:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sleep
+        run: sleep 10
+      - name: Done
+        run: echo 'Done'
