@@ -27,7 +27,7 @@ class GithubChecksVerifier < ApplicationService
 
   def query_check_status
     checks = client.check_runs_for_ref(
-      repo, ref, { per_page: 100, accept: "application/vnd.github.antiope-preview+json" }
+      repo, ref, {per_page: 100, accept: "application/vnd.github.antiope-preview+json"}
     ).check_runs
     log_checks(checks, "Checks running on ref:")
 
