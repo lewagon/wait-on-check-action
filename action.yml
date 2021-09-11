@@ -38,11 +38,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/setup-ruby@v1
+    - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '2.7'
-    - run: bundle install
-      shell: bash
+        ruby-version: 2.7 # Not needed with a .ruby-version file
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - run: ruby ${{ github.action_path }}/entrypoint.rb
       shell: bash
       env:
