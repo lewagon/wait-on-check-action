@@ -36,17 +36,24 @@ inputs:
     default: true
 
 runs:
-  using: "docker"
-  image: "Dockerfile"
-  args:
-    - ${{ inputs.allowed-conclusions }}
-    - ${{ inputs.check-name }}
-    - ${{ inputs.check-regexp }}
-    - ${{ inputs.ref }}
-    - ${{ inputs.repo-token }}
-    - ${{ inputs.verbose }}
-    - ${{ inputs.wait-interval }}
-    - ${{ inputs.running-workflow-name }}
+  using: "composite"
+  steps:
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7 # Not needed with a .ruby-version file
+    - run: bundle install
+      shell: bash
+    - run: ruby entrypoint.rb
+      shell: bash
+      env:
+        ALLOWED_CONCLUSIONS: ${{ inputs.allowed-conclusions }}
+        CHECK_NAME: ${{ inputs.check-name }}
+        CHECK_REGEXP: ${{ inputs.check-regexp }}
+        REF: ${{ inputs.ref }}
+        REPO_TOKEN: ${{ inputs.repo-token }}
+        VERBOSE: ${{ inputs.verbose }}
+        WAIT_INTERVAL: ${{ inputs.wait-interval }}
+        RUNNING_WORKFLOW_NAME: ${{ inputs.running-workflow-name }}
 branding:
   icon: "check-circle"
   color: "green"

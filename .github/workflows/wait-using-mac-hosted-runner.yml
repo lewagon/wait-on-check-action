@@ -1,0 +1,21 @@
+name: Wait using Mac
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  wait-on-mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Wait on tests
+        uses: ./
+        with:
+          ref: ${{ github.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10 # seconds
+          running-workflow-name: wait-on-mac
+          check-name: wait-on-me
+
+      - name: Success
+        run: echo 'Success!'
