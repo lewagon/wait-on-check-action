@@ -3,13 +3,13 @@ require_relative "./app/services/github_checks_verifier"
 require "octokit"
 
 allowed_conclusions = ENV["ALLOWED_CONCLUSIONS"]
-check_name          = ENV["CHECK_NAME"]
-check_regexp        = ENV["CHECK_REGEXP"]
-ref                 = ENV["REF"]
-token               = ENV["REPO_TOKEN"]
-verbose             = ENV["VERBOSE"]
-wait                = ENV["WAIT_INTERVAL"]
-workflow_name       = ENV["RUNNING_WORKFLOW_NAME"]
+check_name = ENV["CHECK_NAME"]
+check_regexp = ENV["CHECK_REGEXP"]
+ref = ENV["REF"]
+token = ENV["REPO_TOKEN"]
+verbose = ENV["VERBOSE"]
+wait = ENV["WAIT_INTERVAL"]
+workflow_name = ENV["RUNNING_WORKFLOW_NAME"]
 
 GithubChecksVerifier.configure do |config|
   config.allowed_conclusions = allowed_conclusions.split(",").map(&:strip)
