@@ -42,6 +42,7 @@ runs:
       with:
         ruby-version: 2.7 # Not needed with a .ruby-version file
     - run: bundle install
+      shell: bash
     - run: ruby entrypoint.rb
       shell: bash
       env:
