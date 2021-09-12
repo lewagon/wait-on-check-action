@@ -42,8 +42,6 @@ runs:
       with:
         ruby-version: 2.7 # Not needed with a .ruby-version file
         bundler-cache: true
-    - run: bundle install
-      shell: bash
     - run: ruby ${{ github.action_path }}/entrypoint.rb
       shell: bash
       env:
