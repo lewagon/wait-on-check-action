@@ -43,7 +43,7 @@ runs:
         ruby-version: 2.7 # Not needed with a .ruby-version file
     - run: bundle install
       shell: bash
-    - run: ruby entrypoint.rb
+    - run: ruby ${{ github.action_path }}/entrypoint.rb
       shell: bash
       env:
         ALLOWED_CONCLUSIONS: ${{ inputs.allowed-conclusions }}
