@@ -42,6 +42,7 @@ runs:
       with:
         ruby-version: 2.7 # Not needed with a .ruby-version file
         bundler-cache: true
+        working-directory: ./lewagon_wait-on-check-action
     - run: ruby ${{ github.action_path }}/entrypoint.rb
       shell: bash
       env:
