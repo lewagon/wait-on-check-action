@@ -38,9 +38,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: ruby/setup-ruby@v1
+    - uses: ruby/setup-ruby@v1.81.0
       with:
         ruby-version: 2.7 # Not needed with a .ruby-version file
+        bundler-cache: true
     - run: bundle install
       shell: bash
     - run: ruby ${{ github.action_path }}/entrypoint.rb
