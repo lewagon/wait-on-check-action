@@ -2,7 +2,7 @@ name: Delete Release
 on:
   workflow_dispatch:  # manually run
     inputs:
-      RELEASE_VERSION:
+      release_version:
         description: 'Set the version of the tag/release to be removed'
         required: true
 jobs:
@@ -12,6 +12,6 @@ jobs:
       - uses: dev-drprasad/delete-tag-and-release@v0.2.0
         with:
           delete_release: true # default: false
-          tag_name: ${{ env.RELEASE_VERSION }} # tag name to delete
+          tag_name: ${{ github.event.inputs.release_version }} # tag name to delete
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
