@@ -68,6 +68,7 @@ runs:
         VERBOSE: ${{ inputs.verbose }}
         WAIT_INTERVAL: ${{ inputs.wait-interval }}
         RUNNING_WORKFLOW_NAME: ${{ inputs.running-workflow-name }}
+
 branding:
   icon: "check-circle"
   color: "green"
