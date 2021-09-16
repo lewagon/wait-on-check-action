@@ -42,6 +42,7 @@ runs:
       with:
         ruby-version: 2.7 # Not needed with a .ruby-version file
         bundler-cache: true
+      working-directory: ${{ github.action_path }}
 
     # - name: Bundle Install
     #   run: |
