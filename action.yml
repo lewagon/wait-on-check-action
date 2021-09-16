@@ -44,14 +44,14 @@ runs:
     - name: Cache Ruby Gems
       uses: actions/cache@v2
       with:
-        path: vendor/bundle
+        path: ${{ github.action_path }}
         key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: |
           ${{ runner.os }}-gems-
 
     - name: Bundle Install
       run: |
-        bundle config path vendor/bundle
+        bundle config path ${{ github.action_path }}
         bundle install --jobs 4 --retry 3
       shell: bash
 
