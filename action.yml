@@ -41,10 +41,20 @@ runs:
     - uses: ruby/setup-ruby@v1.81.0
       with:
         ruby-version: 2.7 # Not needed with a .ruby-version file
-    - run: |
-        cd ${{ github.action_path }}
-        bundle install
-        ruby entrypoint.rb
+    - name: Cache Ruby Gems
+      uses: actions/cache@v2
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-
+
+    - name: Bundle Install
+      run: |
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3
+
+    - run: ruby entrypoint.rb
       shell: bash
       env:
         ALLOWED_CONCLUSIONS: ${{ inputs.allowed-conclusions }}
