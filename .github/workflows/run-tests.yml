@@ -16,13 +16,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - uses: actions/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1.81.0
         with:
-          ruby-version: '2.7'
+          ruby-version: 2.7 # Not needed with a .ruby-version file
 
-      - name: Install dependencies
-        run: bundle install
+      - name: Cache Ruby Gems
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gems-
+
+      - name: Bundle Install
+        run: |
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
 
       - name: Run tests
         run: cd app && bundle exec rspec
