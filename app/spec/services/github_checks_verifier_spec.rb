@@ -12,7 +12,7 @@ describe GithubChecksVerifier do
   end
 
   describe "#call" do
-    before { allow(service).to receive(:wait_for_checks).and_raise(CheckNeverRunError) }
+    before { allow(service).to receive(:wait_for_checks).and_raise(CheckNeverRunError, []) }
 
     it "exit with status false if wait_for_checks fails" do
       expect { service.call }.to raise_error(SystemExit)
@@ -77,13 +77,19 @@ describe GithubChecksVerifier do
     end
   end
 
-  describe "#fail_if_requested_check_never_run" do
+  describe "#fail_if_requested_check_never_ran" do
     it "raises an exception if check_name is not empty and all_checks is" do
       service.config.check_name = "test"
       all_checks = []
       allow(service).to receive(:query_check_status).and_return all_checks
+      expected_msg = <<~EOS
+      The requested check was never run against this ref.
 
-      expected_msg = "The requested check was never run against this ref, exiting..."
+      Checks that ran:
+      - No checks
+
+      Exiting...
+      EOS
       expect {
         service.call
       }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
