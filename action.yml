@@ -21,7 +21,7 @@ inputs:
   repo-token:
     description: "A GitHub token for the repo"
     required: false
-    default: ""
+    default: "${{ secrets.GITHUB_TOKEN }}"
   wait-interval:
     description: "Seconds to wait between Checks API requests"
     required: false
