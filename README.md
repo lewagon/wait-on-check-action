@@ -45,6 +45,29 @@ jobs:
       ...
 ```
 
+## GHE Support
+
+For GHE support you just need to pass in `api-endpoint` as an input.
+
+```yml
+name: Publish
+
+on: [push]
+
+jobs:
+  publish:
+    name: Publish the package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for tests to succeed
+        uses: lewagon/wait-on-check-action@v1.0.0
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'Run tests'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          api-endpoint: https://{YOU_GHE_URL}/api/v3/
+      ...
+```
 ## Alternatives
 
 If you can keep the dependent jobs in a single workflow:
