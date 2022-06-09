@@ -16,6 +16,9 @@ GithubChecksVerifier.configure do |config|
   config.check_name = check_name
   config.check_regexp = check_regexp
   config.client = Octokit::Client.new
+  if token != ""
+    config.client.access_token(token)
+  end
   config.ref = ref
   config.repo = ENV["GITHUB_REPOSITORY"]
   config.verbose = verbose
