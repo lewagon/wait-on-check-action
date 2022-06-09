@@ -16,7 +16,7 @@ GithubChecksVerifier.configure do |config|
   config.check_name = check_name
   config.check_regexp = check_regexp
   config.client = Octokit::Client.new
-  if token.empty?
+  unless token.empty?
     config.client.access_token = token
   end
   config.ref = ref
