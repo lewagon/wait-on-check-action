@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for tests to succeed
-        uses: lewagon/wait-on-check-action@v0.2
+        uses: lewagon/wait-on-check-action@v1.0.0
         with:
           ref: ${{ github.ref }}
           check-name: 'Run tests'
@@ -101,10 +101,10 @@ jobs:
     name: Deploy a new image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       - name: Wait for tests to succeed
-        uses: lewagon/wait-on-check-action@v0.2
+        uses: lewagon/wait-on-check-action@v1.0.0
         with:
           ref: master
           check-name: test
@@ -188,7 +188,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for other checks to succeed
-        uses: lewagon/wait-on-check-action@v0.2
+        uses: lewagon/wait-on-check-action@v1.0.0
         with:
           ref: ${{ github.ref }}
           running-workflow-name: 'Publish the package'
@@ -212,7 +212,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for tests to succeed
-        uses: lewagon/wait-on-check-action@v0.2
+        uses: lewagon/wait-on-check-action@v1.0.0
         with:
           ref: ${{ github.ref }}
           check-name: 'Run tests'
@@ -221,6 +221,35 @@ jobs:
           allowed-conclusions: success,skipped,cancelled
       ...
 ```
+  ### Using check-regexp
+  Similar to the `check-name` parameter, this filters the checks to be waited but using a Regular Expression (aka regexp) to match the check name (jobs.<job_id>.name)
+
+  Example of use:
+  ```yaml
+  name: Wait using check-regexp
+  on:
+    push:
+
+  jobs:
+    wait-for-check-regexp:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+
+        - name: Wait on tests
+          uses: ./
+          with:
+            ref: ${{ github.sha }}
+            repo-token: ${{ secrets.GITHUB_TOKEN }}
+            running-workflow-name: wait-for-check-regexp
+            check-regexp: .?-task
+  ```
+
+  ### Wait interval (optional, default: 10)
+  As it could be seen in many examples, there's a parameter `wait-interval`, and sets a time in seconds to be waited between requests to the GitHub API. The default time is 10 seconds.
+
+  ### Verbose (optional, default: true)
+  If true, it prints some logs to help understanding the process (checks found, filtered, conclussions, etc.)
 
 ## Auto-pagination
 
