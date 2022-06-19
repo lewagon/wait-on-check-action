@@ -221,7 +221,6 @@ jobs:
           allowed-conclusions: success,skipped,cancelled
       ...
 ```
-
   ### Using check-regexp
   Similar to the `check-name` parameter, this filters the checks to be waited but using a Regular Expression (aka regexp) to match the check name (jobs.<job_id>.name)
 
@@ -251,6 +250,12 @@ jobs:
 
   ### Verbose (optional, default: true)
   If true, it prints some logs to help understanding the process (checks found, filtered, conclussions, etc.)
+
+## Auto-pagination
+
+Since we are using Octokit for using GitHub API, we are subject to their limitations. One of them is the pagination max size: if we have more than 100 workflows running, the auto-pagination won't help.
+More about Octokit auto-pagination can be found [here](https://octokit.github.io/octokit.rb/file.README.html#Pagination:~:text=get.data-,Auto%20Pagination,-For%20smallish%20resource)
+The solution would be to fetch all pages to gather all running workflows if they're more than 100, but it's still no implemented.
 
 ## Tests
 
