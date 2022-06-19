@@ -17,7 +17,7 @@ GithubChecksVerifier.configure do |config|
   config.check_regexp = check_regexp
   config.client = Octokit::Client.new(access_token: token, auto_paginate: true)
   config.ref = ref
-  config.repo = ENV["GITHUB_REPOSITORY"]
+  config.repo = ENV["GITHUB_REPOSITORY"].empty? ? nil : ENV["GITHUB_REPOSITORY"]
   config.verbose = verbose
   config.wait = wait.to_i
   config.workflow_name = workflow_name
