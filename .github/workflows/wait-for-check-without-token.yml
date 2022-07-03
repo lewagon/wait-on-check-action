@@ -1,0 +1,20 @@
+name: Wait for check name
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  wait-without-token:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Wait without token
+        uses: ./
+        with:
+          ref: ${{ github.sha }}
+          wait-interval: 10 # seconds
+          running-workflow-name: wait-without-token
+          check-name: wait-on-me
+
+      - name: Success
+        run: echo 'Success!'
