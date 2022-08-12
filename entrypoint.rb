@@ -10,7 +10,7 @@ token = ENV["REPO_TOKEN"]
 verbose = ENV["VERBOSE"]
 wait = ENV["WAIT_INTERVAL"]
 workflow_name = ENV["RUNNING_WORKFLOW_NAME"]
-api_endpoint = ENV.fetch("API_ENDPOINT", "").strip.empty? ? "https://api.github.com" : ENV["API_ENDPOINT"]
+api_endpoint = ENV.fetch("API_ENDPOINT", "https://api.github.com")
 
 GithubChecksVerifier.configure do |config|
   config.allowed_conclusions = allowed_conclusions.split(",").map(&:strip)
