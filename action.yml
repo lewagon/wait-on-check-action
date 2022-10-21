@@ -26,6 +26,10 @@ inputs:
     description: "Seconds to wait between Checks API requests"
     required: false
     default: "10"
+  api-endpoint:
+    description: "Github API Endpoint to use."
+    required: false
+    default: ""
   running-workflow-name:
     description: "Name of the workflow to be ignored (the one who is waiting for the rest)"
     required: false
@@ -68,6 +72,7 @@ runs:
         VERBOSE: ${{ inputs.verbose }}
         WAIT_INTERVAL: ${{ inputs.wait-interval }}
         RUNNING_WORKFLOW_NAME: ${{ inputs.running-workflow-name }}
+        API_ENDPOINT: ${{ inputs.api-endpoint }}
 branding:
   icon: "check-circle"
   color: "green"
