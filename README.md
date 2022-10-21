@@ -65,7 +65,7 @@ jobs:
           ref: ${{ github.ref }}
           check-name: 'Run tests'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
-          api-endpoint: https://{YOU_GHE_URL}/api/v3/
+          api-endpoint: YOUR_GHE_API_BASE_URL # Fed to https://octokit.github.io/octokit.rb/Octokit/Configurable.html#api_endpoint-instance_method
       ...
 ```
 ## Alternatives
