@@ -98,7 +98,7 @@ describe GithubChecksVerifier do
       ]
       allow(service).to receive(:query_check_status).and_return all_checks
 
-      expected_msg = "The conclusion of one or more checks were not allowed. Allowed conclusions are: "\
+      expected_msg = "The conclusion of one or more checks were not allowed. Allowed conclusions are: " \
                      "success, skipped. This can be configured with the 'allowed-conclusions' param."
       expect {
         service.call
