@@ -42,7 +42,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: ruby/setup-ruby@v1.81.0
+    - uses: ruby/setup-ruby@v1.120.0
       with:
         ruby-version: 2.7 # Not needed with a .ruby-version file
 
