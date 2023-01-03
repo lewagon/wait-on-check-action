@@ -191,7 +191,7 @@ jobs:
 To inspect the names as they appear to the API:
 
 ```bash
-curl -i -u username:$token \
+curl -u username:$token \
 https://api.github.com/repos/OWNER/REPO/commits/REF/check-runs \
 -H 'Accept: application/vnd.github.antiope-preview+json' | jq '[.check_runs[].name]'
 ```
