@@ -299,6 +299,28 @@ jobs:
             running-workflow-name: wait-for-check-regexp
             check-regexp: .?-task
   ```
+  ### Ignore-checks
+  To selectively filter checks and ignore specific ones, you can specify the ignore-checks option with a list of comma-separated check names to be ignored.
+  Example of use:
+  ```yaml
+  name: Wait using check-regexp
+  on:
+    push:
+
+  jobs:
+    wait-for-check-regexp:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+
+        - name: Wait on tests
+          uses: ./
+          with:
+            ref: ${{ github.sha }}
+            repo-token: ${{ secrets.GITHUB_TOKEN }}
+            running-workflow-name: wait-for-check-regexp
+            ignore-checks: label1,label2
+  ```
 
   ### Wait interval (optional, default: 10)
   As it could be seen in many examples, there's a parameter `wait-interval`, and sets a time in seconds to be waited between requests to the GitHub API. The default time is 10 seconds.
