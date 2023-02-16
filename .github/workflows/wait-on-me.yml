@@ -5,7 +5,7 @@ on:
       delay_seconds:
         description: "Time to delay"
         required: false
-        default: "120"
+        default: "60"
   push:
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
         run: echo "$GITHUB_CONTEXT"
       - name: Do some busywork
         env:
-          default_delay: "120"
+          default_delay: "60"
           input_delay: ${{ github.event.inputs.delay_seconds }}
         run: |
           [ "$input_delay" ] && sleep_for="$input_delay" || sleep_for="$default_delay"
