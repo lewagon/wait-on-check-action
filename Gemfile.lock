@@ -17,6 +17,8 @@ GEM
       faraday-net_http (~> 2.0)
       ruby2_keywords (>= 0.0.4)
     faraday-net_http (2.0.3)
+    faraday-retry (2.0.0)
+      faraday (~> 2.0)
     i18n (1.8.7)
       concurrent-ruby (~> 1.0)
     minitest (5.14.3)
@@ -72,11 +74,13 @@ GEM
 
 PLATFORMS
   x86_64-darwin-19
+  x86_64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
   activesupport (~> 6.1.1)
   byebug
+  faraday-retry (~> 2.0)
   octokit (~> 4.25)
   rspec
   standard
