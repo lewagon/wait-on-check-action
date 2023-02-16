@@ -220,6 +220,38 @@ jobs:
       ...
 ```
 
+#### Using running workflow name in reusable workflows
+
+Using this action in a reusable workflow means accepting a constraint that all calling jobs will have the same name.  For example, all calling workflows must call their jobs `caller` (or some more relevant constant) so that if the reused workflow containing the job that uses this action to wait is called `callee` then the task can successfully wait on `caller / callee`.  Working example follows.
+
+.github/workflows/caller.yml
+
+```yml
+on:
+  push:
+jobs:
+  caller:
+    uses: ./.github/workflows/callee.yml
+```
+
+.github/workflows/callee.yml
+
+```yml
+on:
+  workflow_call:
+jobs:
+  callee:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Other Workflows
+        uses: lewagon/wait-on-check-action@v1.0.0
+        with:
+          ref: ${{ github.ref }}
+          running-workflow-name: 'caller / callee'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+```
+
 ### Allowed conclusions
 
 By default, checks that conclude with either `success` or `skipped` are allowed, and anything else is not. You may configure this with the `allowed-conclusions` option, which is a comma-separated list of conclusions.
