@@ -3,22 +3,17 @@ name: StandardRB
 on:
   push:
 
-permissions:
-  checks: write
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
           bundler-cache: true
-      - name: Check out the repo
-        uses: actions/checkout@v3
-      - name: standardrb
-        env:
-          RUBY_VERSION: '3.2'
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: amoeba/standardrb-action@v2
+      - name: Install StandardRB
+        run: gem install standard
+      - name: Run StandardRB
+        run: standardrb
