@@ -44,7 +44,7 @@ runs:
   steps:
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7 # Not needed with a .ruby-version file
+        ruby-version: 3.2 # Not needed with a .ruby-version file
 
     - name: Cache Ruby Gems
       uses: actions/cache@v3
