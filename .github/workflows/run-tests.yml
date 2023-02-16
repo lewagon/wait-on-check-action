@@ -16,12 +16,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: ruby/setup-ruby@v1.81.0
+      - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7 # Not needed with a .ruby-version file
+          ruby-version: 3.2
 
       - name: Cache Ruby Gems
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}

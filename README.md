@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for tests to succeed
-        uses: lewagon/wait-on-check-action@v1.0.0
+        uses: lewagon/wait-on-check-action@v1.2.0
         with:
           ref: ${{ github.ref }}
           check-name: 'Run tests'
@@ -45,6 +45,29 @@ jobs:
       ...
 ```
 
+## GHE Support
+
+For GHE support you just need to pass in `api-endpoint` as an input.
+
+```yml
+name: Publish
+
+on: [push]
+
+jobs:
+  publish:
+    name: Publish the package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for tests to succeed
+        uses: lewagon/wait-on-check-action@v1.2.0
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'Run tests'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          api-endpoint: YOUR_GHE_API_BASE_URL # Fed to https://octokit.github.io/octokit.rb/Octokit/Configurable.html#api_endpoint-instance_method
+      ...
+```
 ## Alternatives
 
 If you can keep the dependent jobs in a single workflow:
@@ -104,7 +127,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Wait for tests to succeed
-        uses: lewagon/wait-on-check-action@v1.0.0
+        uses: lewagon/wait-on-check-action@v1.2.0
         with:
           ref: master
           check-name: test
@@ -168,7 +191,7 @@ jobs:
 To inspect the names as they appear to the API:
 
 ```bash
-curl -i -u username:$token \
+curl -u username:$token \
 https://api.github.com/repos/OWNER/REPO/commits/REF/check-runs \
 -H 'Accept: application/vnd.github.antiope-preview+json' | jq '[.check_runs[].name]'
 ```
@@ -188,7 +211,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for other checks to succeed
-        uses: lewagon/wait-on-check-action@v1.0.0
+        uses: lewagon/wait-on-check-action@v1.2.0
         with:
           ref: ${{ github.ref }}
           running-workflow-name: 'Publish the package'
@@ -244,7 +267,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for tests to succeed
-        uses: lewagon/wait-on-check-action@v1.0.0
+        uses: lewagon/wait-on-check-action@v1.2.0
         with:
           ref: ${{ github.ref }}
           check-name: 'Run tests'

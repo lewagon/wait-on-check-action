@@ -1,14 +1,19 @@
 name: StandardRB
 
-on: [push]
+on:
+  push:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: StandardRB Linter
-      uses: andrewmcodes/standardrb-action@v0.0.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        RUBY_VERSION: 2.7
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+      - name: Install StandardRB
+        run: gem install standard
+      - name: Run StandardRB
+        run: standardrb
