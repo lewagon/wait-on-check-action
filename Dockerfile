@@ -4,7 +4,7 @@ RUN apt-get update -yqq && apt-get -yqq --no-install-recommends install build-es
 
 COPY Gemfile Gemfile
 COPY Gemfile.lock Gemfile.lock
-RUN gem install bundler
+RUN gem install bundler -v 2.4.22
 RUN bundle config set with 'development test'
 RUN bundle install --jobs 20 --retry 5
 COPY app /app
