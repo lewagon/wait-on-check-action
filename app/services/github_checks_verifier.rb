@@ -15,6 +15,7 @@ class GithubChecksVerifier < ApplicationService
   config_accessor(:check_regexp) { "" }
   config_accessor(:allowed_conclusions) { ["success", "skipped"] }
   config_accessor(:verbose) { true }
+  config_accessor(:ignore_checks){[]}
 
   def call
     wait_for_checks
@@ -46,7 +47,8 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def apply_filters(checks)
-    checks.reject! { |check| check.name == workflow_name }
+    checks.reject! { |check| [ignore_checks, workflow_name].flatten.include?(check.name) }
+    log_checks(checks, "Checks after ignore checks filter:")
     checks.select! { |check| check.name == check_name } if check_name.present?
     log_checks(checks, "Checks after check_name filter:")
     apply_regexp_filter(checks)

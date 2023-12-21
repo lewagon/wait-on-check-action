@@ -7,6 +7,10 @@ inputs:
     description: "Array of allowed conclusions"
     required: false
     default: success,skipped
+  ignore-checks:
+    description: "Array of ignore checks"
+    required: false
+    default: ""
   check-name:
     description: "A name of a check that has to pass"
     required: false
@@ -65,6 +69,7 @@ runs:
       shell: bash
       env:
         ALLOWED_CONCLUSIONS: ${{ inputs.allowed-conclusions }}
+        IGNORE_CHECKS: ${{ inputs.ignore-checks }}
         CHECK_NAME: ${{ inputs.check-name }}
         CHECK_REGEXP: ${{ inputs.check-regexp }}
         REF: ${{ inputs.ref }}
