@@ -15,7 +15,7 @@ class GithubChecksVerifier < ApplicationService
   config_accessor(:check_regexp) { "" }
   config_accessor(:allowed_conclusions) { ["success", "skipped"] }
   config_accessor(:verbose) { true }
-  config_accessor(:ignore_checks){[]}
+  config_accessor(:ignore_checks) { [] }
 
   def call
     wait_for_checks

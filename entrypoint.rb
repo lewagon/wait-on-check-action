@@ -12,7 +12,6 @@ wait = ENV["WAIT_INTERVAL"]
 workflow_name = ENV["RUNNING_WORKFLOW_NAME"]
 api_endpoint = ENV.fetch("API_ENDPOINT", "")
 ignore_checks = ENV["IGNORE_CHECKS"]
- 
 
 GithubChecksVerifier.configure do |config|
   config.allowed_conclusions = allowed_conclusions.split(",").map(&:strip)

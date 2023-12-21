@@ -139,7 +139,7 @@ describe GithubChecksVerifier do
       service.send(:apply_filters, checks)
       expect(checks.map(&:name)).to all(eq "other_check")
     end
-    
+
     it "filters out only ignore_checks" do
       checks = [
         OpenStruct.new(name: "check_name1", status: "queued"),
@@ -147,7 +147,7 @@ describe GithubChecksVerifier do
         OpenStruct.new(name: "other_check", status: "queued")
       ]
 
-      service.config.ignore_checks = ["check_name1","check_name2"]
+      service.config.ignore_checks = ["check_name1", "check_name2"]
       service.send(:apply_filters, checks)
       expect(checks.map(&:name)).to all(eq "other_check")
     end
@@ -175,18 +175,18 @@ describe GithubChecksVerifier do
 
       expect(checks.map(&:name)).not_to include("workflow_name")
     end
-    
+
     it "does not filter if ignore checks are empty" do
       checks = [
         OpenStruct.new(name: "test1", status: "completed", conclusion: "success"),
         OpenStruct.new(name: "test2", status: "completed", conclusion: "skipped")
       ]
       service.config.ignore_checks = []
-      service.send(:apply_filters, checks)   
-      
+      service.send(:apply_filters, checks)
+
       expect(checks.size).to eq 2
-   end
- 
+    end
+
     it "apply the regexp filter" do
       checks = [
         OpenStruct.new(name: "test", status: "pending"),
