@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require_relative "./app/services/github_checks_verifier"
+require_relative "app/services/github_checks_verifier"
 require "octokit"
 
 allowed_conclusions = ENV["ALLOWED_CONCLUSIONS"]
