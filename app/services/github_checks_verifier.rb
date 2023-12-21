@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "./application_service"
+require_relative "application_service"
 require_relative "../errors/check_conclusion_not_allowed_error"
 require_relative "../errors/check_never_run_error"
 require "active_support/configurable"
