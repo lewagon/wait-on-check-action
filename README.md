@@ -1,8 +1,11 @@
 # Wait On Check Action
 
+[![StandardRB](https://github.com/lewagon/wait-on-check-action/actions/workflows/standardrb-linter.yml/badge.svg)](https://github.com/lewagon/wait-on-check-action/actions/workflows/standardrb-linter.yml)
+[![RSpec tests](https://github.com/lewagon/wait-on-check-action/actions/workflows/run-tests.yml/badge.svg)](https://github.com/lewagon/wait-on-check-action/actions/workflows/run-tests.yml)
+
 Pause a workflow until a job in another workflow completes successfully.
 
-This action uses the [Checks API][checks_api] to poll for check results. On success, the action exit allowing the workflow resume. Otherwise, the action will exit with status code 1 and fail the whole workflow.
+This action uses the [Checks API](https://docs.github.com/en/rest/checks) to poll for check results. On success, the action exit allowing the workflow resume. Otherwise, the action will exit with status code 1 and fail the whole workflow.
 
 This is a workaround to GitHub's limitation of non-interdependent workflows :tada:
 
@@ -122,7 +125,7 @@ jobs:
     name: Deploy a new image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Wait for tests to succeed
         uses: lewagon/wait-on-check-action@v1.3.4
@@ -290,7 +293,7 @@ jobs:
         - uses: actions/checkout@v2
 
         - name: Wait on tests
-          uses: ./
+          uses: lewagon/wait-on-check-action@v1.3.3
           with:
             ref: ${{ github.sha }}
             repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -312,7 +315,7 @@ jobs:
         - uses: actions/checkout@v2
 
         - name: Wait on tests
-          uses: ./
+          uses: lewagon/wait-on-check-action@v1.3.3
           with:
             ref: ${{ github.sha }}
             repo-token: ${{ secrets.GITHUB_TOKEN }}
