@@ -333,7 +333,7 @@ jobs:
 
 Since we are using Octokit for using GitHub API, we are subject to their limitations. One of them is the pagination max size: if we have more than 100 workflows running, the auto-pagination won't help.
 More about Octokit auto-pagination can be found [here](https://octokit.github.io/octokit.rb/file.README.html#Pagination:~:text=get.data-,Auto%20Pagination,-For%20smallish%20resource)
-The solution would be to fetch all pages to gather all running workflows if they're more than 100, but it's still no implemented.
+The solution would be to fetch all pages to gather all running workflows if they're more than 100, but it's still not implemented.
 
 ## Tests
 
