@@ -75,6 +75,25 @@ describe GithubChecksVerifier do
 
       expect(result.map(&:name)).not_to include("invoking_check")
     end
+
+    context "when there are many checks" do
+      it 'handles more than 30 check results' do
+        checks = 35.times.map do |i|
+          OpenStruct.new(
+            name: "check-#{i}",
+            status: 'completed',
+            conclusion: 'success'
+          )
+        end
+
+        mock_response = OpenStruct.new(check_runs: checks)
+        allow(service.config.client).to receive(:check_runs_for_ref)
+                                          .and_return(mock_response)
+
+        result = service.send(:query_check_status)
+        expect(result.length).to eq(35)
+      end
+    end
   end
 
   describe "#fail_if_requested_check_never_run" do
