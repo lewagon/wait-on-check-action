@@ -11,4 +11,5 @@ group :development do
   gem 'rspec', '~> 3.10.0'
   gem 'rubocop', '~> 1.57.2'
   gem 'rubocop-rspec', '~> 3.0.0'
+  gem 'yard', '~> 0.9.37'
 end

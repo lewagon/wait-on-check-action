@@ -72,6 +72,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
+    yard (0.9.37)
     zeitwerk (2.6.7)
 
 PLATFORMS
@@ -88,6 +89,7 @@ DEPENDENCIES
   rspec (~> 3.10.0)
   rubocop (~> 1.57.2)
   rubocop-rspec (~> 3.0.0)
+  yard (~> 0.9.37)
 
 BUNDLED WITH
    2.6.6

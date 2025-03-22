@@ -375,6 +375,14 @@ To run tests:
 bundle exec rspec
 ```
 
+### Documentation
+
+To generate the documentation locally:
+
+```bash
+bundle exec yard
+```
+
 ### Linters
 
 To run linters:
