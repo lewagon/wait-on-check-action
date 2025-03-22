@@ -66,6 +66,8 @@ GEM
     rubocop-performance (1.19.1)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
+    rubocop-rspec (3.0.0)
+      rubocop (~> 1.40)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     sawyer (0.9.2)
@@ -89,6 +91,7 @@ GEM
     zeitwerk (2.6.7)
 
 PLATFORMS
+  arm64-darwin-24
   x86_64-darwin-19
   x86_64-darwin-22
   x86_64-linux
@@ -99,7 +102,9 @@ DEPENDENCIES
   faraday-retry (~> 2.0)
   octokit (~> 4.25)
   rspec
+  rubocop
+  rubocop-rspec
   standard
 
 BUNDLED WITH
-   2.2.3
+   2.6.6
