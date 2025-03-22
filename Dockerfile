@@ -1,17 +1,12 @@
-FROM ruby:2.7.2-slim-buster AS base
+FROM ruby:2.7.2-slim-buster
 
-RUN apt-get update -yqq && apt-get -yqq --no-install-recommends install build-essential
+RUN apt-get update -y && apt-get -y install build-essential
+RUN gem install bundler
 
-COPY Gemfile Gemfile
-COPY Gemfile.lock Gemfile.lock
-RUN gem install bundler -v 2.4.22
-RUN bundle config set with 'development test'
-RUN bundle install --jobs 20 --retry 5
-COPY app /app
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
 
-COPY entrypoint.rb /entrypoint.rb
-FROM base AS test
-CMD cd app && bundle exec rspec
+COPY app app
+COPY entrypoint.rb .
 
-FROM base AS release
 ENTRYPOINT ["/entrypoint.rb"]
