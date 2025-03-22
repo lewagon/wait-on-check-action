@@ -1,0 +1,12 @@
+severity: low
+exclude:
+  - message: Shield links
+    pattern: img\.shields\.io
+
+  - message: Dependencies
+    paths:
+      - node_modules
+
+  - message: Tooling outputs
+    paths:
+      - package-lock.json

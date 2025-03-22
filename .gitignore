@@ -1,3 +1,5 @@
 .bundle
 .ruby-version
-vendor
+.yarn
+node_modules/
+vendor/
