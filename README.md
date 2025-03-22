@@ -340,3 +340,41 @@ The solution would be to fetch all pages to gather all running workflows if they
 There are sample workflows in the `.github/workflows` directory. Two of them are logging tasks to emulate real-world actions being executed that have to be waited. The important workflows are the ones that use the wait-on-check-action.
 
 A workflow named "wait_omitting-check-name" waits for the two simple-tasks, while the one named "wait_using_check-name" only waits for "simple-task".
+
+## Tooling
+
+### Dependencies
+
+To install dependencies:
+
+```bash
+bundle install
+```
+
+### Tests
+
+To run tests:
+
+```bash
+bundle exec rspec
+```
+
+### Linters
+
+To run linters:
+
+```bash
+bundle exec rubocop
+```
+
+## Contributing
+
+Please read this repository's [Code of Conduct](CODE_OF_CONDUCT.md) which outlines our collaboration standards and the [Changelog](CHANGELOG.md) for details on breaking changes that have been made.
+
+This repository adheres to semantic versioning standards. For more information on semantic versioning visit [SemVer](https://semver.org).
+
+Bump2version is used to version and tag changes. For example:
+
+```bash
+bump2version patch
+```

@@ -1,11 +1,8 @@
 require:
-  - standard
   - rubocop-rspec
 
 AllCops:
   NewCops: enable
-  Exclude:
-    - vendor/**/*
 
 RSpec:
   Enabled: true
