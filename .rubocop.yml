@@ -4,8 +4,6 @@ require:
 AllCops:
   NewCops: enable
   SuggestExtensions: false
-  Exclude:
-    - "vendor/**/*"
 
 Layout/SpaceInsideHashLiteralBraces:
   Enabled: false
