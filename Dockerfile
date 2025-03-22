@@ -1,4 +1,4 @@
-FROM ruby:2.7.2-slim-buster
+FROM ruby:3.2.7-slim-bullseye
 
 RUN apt-get update -y && apt-get -y install build-essential
 RUN gem install bundler
