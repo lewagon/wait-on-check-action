@@ -13,10 +13,10 @@ runs:
         ruby-version: 3.2
         bundler-cache: true
         
-    - name: Install yarn dependencies
+    - name: Install npm dependencies
       shell: bash
       run: npm install cspell husky prettier
 
-    - name: Install pip dependencies
+    - name: Install PyPI dependencies
       shell: bash
       run: pip install bump2version trufflehog3
