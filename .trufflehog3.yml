@@ -6,6 +6,7 @@ exclude:
   - message: Dependencies
     paths:
       - node_modules
+      - vendor
 
   - message: Tooling outputs
     paths:
