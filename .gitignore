@@ -1,0 +1,7 @@
+.bundle
+.DS_Store
+.ruby-version
+.yardoc
+doc/
+node_modules/
+vendor/

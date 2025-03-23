@@ -1,0 +1,4 @@
+npx cspell . --dot --gitignore
+trufflehog3 --no-history
+bundle exec rubocop
+bundle exec rspec

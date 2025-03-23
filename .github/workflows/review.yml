@@ -1,0 +1,22 @@
+name: Review
+
+on: [push, pull_request]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the source code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        uses: ./.github/actions/install
+
+      - name: Run linters
+        run: |
+          npx cspell . --dot --gitignore
+          trufflehog3 --no-history
+          bundle exec rubocop
+
+      - name: Run tests
+        run: bundle exec rspec

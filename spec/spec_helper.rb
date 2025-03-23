@@ -2,7 +2,7 @@
 
 require "byebug"
 
-services = Dir["./services/**/*.rb"]
+services = Dir["./app/services/**/*.rb"]
 services.sort.each { |f| require f }
 
 test_helpers = Dir["./spec/support/**/*.rb"]

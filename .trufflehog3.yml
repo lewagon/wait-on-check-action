@@ -1,0 +1,15 @@
+severity: low
+exclude:
+  - message: Shield links
+    pattern: img\.shields\.io
+
+  - message: Dependencies
+    paths:
+      - node_modules
+      - vendor
+
+  - message: Tooling outputs
+    paths:
+      - .yardoc
+      - doc
+      - package-lock.json

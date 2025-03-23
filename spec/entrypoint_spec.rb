@@ -5,7 +5,7 @@ describe "entrypoint" do
     allow(GithubChecksVerifier).to receive(:call)
     allow(GithubChecksVerifier).to receive(:configure)
 
-    require_relative "../../entrypoint"
+    require_relative "../entrypoint"
 
     expect(GithubChecksVerifier).to have_received(:call)
   end

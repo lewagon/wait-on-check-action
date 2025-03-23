@@ -69,6 +69,7 @@ jobs:
           api-endpoint: YOUR_GHE_API_BASE_URL # Fed to https://octokit.github.io/octokit.rb/Octokit/Configurable.html#api_endpoint-instance_method
       ...
 ```
+
 ## Alternatives
 
 If you can keep the dependent jobs in a single workflow:
@@ -96,7 +97,7 @@ name: Publish
 
 on:
   workflow_run:
-    workflows: ['Test']
+    workflows: ["Test"]
     types:
       - completed
 ```
@@ -223,7 +224,7 @@ jobs:
 
 #### Using running workflow name in reusable workflows
 
-Using this action in a reusable workflow means accepting a constraint that all calling jobs will have the same name.  For example, all calling workflows must call their jobs `caller` (or some more relevant constant) so that if the reused workflow containing the job that uses this action to wait is called `callee` then the task can successfully wait on `caller / callee`.  Working example follows.
+Using this action in a reusable workflow means accepting a constraint that all calling jobs will have the same name. For example, all calling workflows must call their jobs `caller` (or some more relevant constant) so that if the reused workflow containing the job that uses this action to wait is called `callee` then the task can successfully wait on `caller / callee`. Working example follows.
 
 .github/workflows/caller.yml
 
@@ -248,7 +249,7 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.3.4
         with:
           ref: ${{ github.ref }}
-          running-workflow-name: 'caller / callee'
+          running-workflow-name: "caller / callee"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
 ```
@@ -277,57 +278,65 @@ jobs:
           allowed-conclusions: success,skipped,cancelled
       ...
 ```
-  ### Using check-regexp
-  Similar to the `check-name` parameter, this filters the checks to be waited but using a Regular Expression (aka regexp) to match the check name (jobs.<job_id>.name)
 
-  Example of use:
-  ```yaml
-  name: Wait using check-regexp
-  on:
-    push:
+### Using check-regexp
 
-  jobs:
-    wait-for-check-regexp:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
+Similar to the `check-name` parameter, this filters the checks to be waited but using a Regular Expression (aka regexp) to match the check name (jobs.<job_id>.name)
 
-        - name: Wait on tests
-          uses: lewagon/wait-on-check-action@v1.3.3
-          with:
-            ref: ${{ github.sha }}
-            repo-token: ${{ secrets.GITHUB_TOKEN }}
-            running-workflow-name: wait-for-check-regexp
-            check-regexp: .?-task
-  ```
-  ### Ignore-checks
-  To selectively filter checks and ignore specific ones, you can specify the ignore-checks option with a list of comma-separated check names to be ignored.
-  Example of use:
-  ```yaml
-  name: Wait using check-regexp
-  on:
-    push:
+Example of use:
 
-  jobs:
-    wait-for-check-regexp:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
+```yaml
+name: Wait using check-regexp
+on:
+  push:
 
-        - name: Wait on tests
-          uses: lewagon/wait-on-check-action@v1.3.3
-          with:
-            ref: ${{ github.sha }}
-            repo-token: ${{ secrets.GITHUB_TOKEN }}
-            running-workflow-name: wait-for-check-regexp
-            ignore-checks: label1,label2
-  ```
+jobs:
+  wait-for-check-regexp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
-  ### Wait interval (optional, default: 10)
-  As it could be seen in many examples, there's a parameter `wait-interval`, and sets a time in seconds to be waited between requests to the GitHub API. The default time is 10 seconds.
+      - name: Wait on tests
+        uses: lewagon/wait-on-check-action@v1.3.3
+        with:
+          ref: ${{ github.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          running-workflow-name: wait-for-check-regexp
+          check-regexp: .?-task
+```
 
-  ### Verbose (optional, default: true)
-  If true, it prints some logs to help understanding the process (checks found, filtered, conclussions, etc.)
+### Ignore-checks
+
+To selectively filter checks and ignore specific ones, you can specify the ignore-checks option with a list of comma-separated check names to be ignored.
+Example of use:
+
+```yaml
+name: Wait using check-regexp
+on:
+  push:
+
+jobs:
+  wait-for-check-regexp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Wait on tests
+        uses: lewagon/wait-on-check-action@v1.3.3
+        with:
+          ref: ${{ github.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          running-workflow-name: wait-for-check-regexp
+          ignore-checks: label1,label2
+```
+
+### Wait interval (optional, default: 10)
+
+As it could be seen in many examples, there's a parameter `wait-interval`, and sets a time in seconds to be waited between requests to the GitHub API. The default time is 10 seconds.
+
+### Verbose (optional, default: true)
+
+If true, it prints some logs to help understanding the process (checks found, filtered, conclussions, etc.)
 
 ## Auto-pagination
 
@@ -340,3 +349,66 @@ The solution would be to fetch all pages to gather all running workflows if they
 There are sample workflows in the `.github/workflows` directory. Two of them are logging tasks to emulate real-world actions being executed that have to be waited. The important workflows are the ones that use the wait-on-check-action.
 
 A workflow named "wait_omitting-check-name" waits for the two simple-tasks, while the one named "wait_using_check-name" only waits for "simple-task".
+
+## Tooling
+
+### Dependencies
+
+To install dependencies:
+
+```bash
+bundle install
+```
+
+Some packages must be installed from npm and PyPI:
+
+```bash
+npm install cspell husky prettier
+pip install bump2version trufflehog3
+```
+
+### Tests
+
+To run tests:
+
+```bash
+bundle exec rspec
+```
+
+### Documentation
+
+To generate the documentation locally:
+
+```bash
+bundle exec yard
+```
+
+### Linters
+
+To run linters:
+
+```bash
+npx cspell . --dot --gitignore
+bundle exec rubocop
+trufflehog3 --no-history
+```
+
+### Formatters
+
+To run formatters:
+
+```bash
+prettier . --write
+```
+
+## Contributing
+
+Please read this repository's [Code of Conduct](CODE_OF_CONDUCT.md) which outlines our collaboration standards and the [Changelog](CHANGELOG.md) for details on breaking changes that have been made.
+
+This repository adheres to semantic versioning standards. For more information on semantic versioning visit [SemVer](https://semver.org).
+
+Bump2version is used to version and tag changes. For example:
+
+```bash
+bump2version patch
+```

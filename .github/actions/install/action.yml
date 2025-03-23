@@ -1,0 +1,22 @@
+name: Install
+description: Install dependencies
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout the source code
+      uses: actions/checkout@v4
+
+    - name: Set the ruby version
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+        bundler-cache: true
+        
+    - name: Install npm dependencies
+      shell: bash
+      run: npm install cspell husky prettier
+
+    - name: Install PyPI dependencies
+      shell: bash
+      run: pip install bump2version trufflehog3
