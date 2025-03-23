@@ -1,19 +1,20 @@
 # frozen_string_literal: true
 
-require_relative "application_service"
-require_relative "../errors/check_conclusion_not_allowed_error"
-require_relative "../errors/check_never_run_error"
-require "active_support/configurable"
+require_relative 'application_service'
+require_relative '../errors/check_conclusion_not_allowed_error'
+require_relative '../errors/check_never_run_error'
+require 'active_support/configurable'
 
-require "json"
-require "octokit"
+require 'json'
+require 'octokit'
 
+# Verifies the status of GitHub checks for a given repository.
 class GithubChecksVerifier < ApplicationService
   include ActiveSupport::Configurable
   config_accessor :check_name, :workflow_name, :client, :repo, :ref
   config_accessor(:wait) { 30 } # set a default
-  config_accessor(:check_regexp) { "" }
-  config_accessor(:allowed_conclusions) { ["success", "skipped"] }
+  config_accessor(:check_regexp) { '' }
+  config_accessor(:allowed_conclusions) { %w[success skipped] }
   config_accessor(:verbose) { true }
   config_accessor(:ignore_checks) { [] }
 
@@ -28,9 +29,9 @@ class GithubChecksVerifier < ApplicationService
 
   def query_check_status
     checks = client.check_runs_for_ref(
-      repo, ref, { accept: "application/vnd.github.antiope-preview+json" }
+      repo, ref, { accept: 'application/vnd.github.antiope-preview+json' }
     ).check_runs
-    log_checks(checks, "Checks running on ref:")
+    log_checks(checks, 'Checks running on ref:')
 
     apply_filters(checks)
   end
@@ -42,17 +43,17 @@ class GithubChecksVerifier < ApplicationService
     statuses = checks.map(&:status).uniq
     statuses.each do |status|
       print "Checks #{status}: "
-      puts checks.select { |check| check.status == status }.map(&:name).join(", ")
+      puts checks.select { |check| check.status == status }.map(&:name).join(', ')
     end
   end
 
   def apply_filters(checks)
     checks.reject! { |check| [ignore_checks, workflow_name].flatten.include?(check.name) }
-    log_checks(checks, "Checks after ignore checks filter:")
+    log_checks(checks, 'Checks after ignore checks filter:')
     checks.select! { |check| check.name == check_name } if check_name.present?
-    log_checks(checks, "Checks after check_name filter:")
+    log_checks(checks, 'Checks after check_name filter:')
     apply_regexp_filter(checks)
-    log_checks(checks, "Checks after Regexp filter:")
+    log_checks(checks, 'Checks after Regexp filter:')
 
     checks
   end
@@ -62,7 +63,7 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def all_checks_complete(checks)
-    checks.all? { |check| check.status == "completed" }
+    checks.all? { |check| check.status == 'completed' }
   end
 
   def filters_present?
@@ -86,8 +87,8 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def show_checks_conclusion_message(checks)
-    puts "Checks completed:"
-    puts checks.reduce("") { |message, check|
+    puts 'Checks completed:'
+    puts checks.reduce('') { |message, check|
       "#{message}#{check.name}: #{check.status} (#{check.conclusion})\n"
     }
   end

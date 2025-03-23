@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ApplicationService
+class ApplicationService # :nodoc:
   def self.call(...)
     new(...).call
   end

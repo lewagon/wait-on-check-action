@@ -15,6 +15,7 @@
     "doctl",
     "kubeconfig",
     "lewagon",
+    "nodoc",
     "rubocop",
     "yardoc"
   ]

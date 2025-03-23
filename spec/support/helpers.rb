@@ -1,21 +1,19 @@
 # frozen_string_literal: true
 
-require "ostruct"
-require "json"
+require 'ostruct'
+require 'json'
 module Helpers
-  SAMPLE_RESPONSES_BASE_PATH = "spec/github_api_sample_responses/"
+  SAMPLE_RESPONSES_BASE_PATH = 'spec/github_api_sample_responses/'
+
+  CheckRun = Struct.new(:status, :conclusion, :name)
+  CheckRunsResponse = Struct.new(:check_runs)
 
   def load_json_sample(file_name)
     File.read(SAMPLE_RESPONSES_BASE_PATH + file_name)
   end
 
   def load_checks_from_yml(yml_file)
-    JSON.parse(load_json_sample(yml_file))["check_runs"].map { |check| OpenStruct.new(check) }
-  end
-
-  def mock_api_response(checks)
-    response = double(check_runs: checks)
-    allow_any_instance_of(Octokit::Client).to receive(:check_runs_for_ref) { response }
+    JSON.parse(load_json_sample(yml_file))['check_runs'].map { |check| CheckRun.new(**check) }
   end
 
   def with_captured_stdout

@@ -3,34 +3,8 @@ require:
 
 AllCops:
   NewCops: enable
-  SuggestExtensions: false
-
-RSpec/AnyInstance:
-  Enabled: false
-
-RSpec/ContextWording:
-  Enabled: false
-
-RSpec/DescribeClass:
-  Enabled: false
 
 RSpec/ExampleLength:
   Enabled: false
+  Max: 10
 
-RSpec/MultipleExpectations:
-  Enabled: false
-
-RSpec/VerifiedDoubles:
-  Enabled: false
-
-Style/Documentation:
-  Enabled: false
-
-Style/OpenStructUse:
-  Enabled: false
-
-Style/StringLiterals:
-  Enabled: false
-
-Style/WordArray:
-  Enabled: false
