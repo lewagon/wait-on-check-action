@@ -5,9 +5,6 @@ AllCops:
   NewCops: enable
   SuggestExtensions: false
 
-Layout/SpaceInsideHashLiteralBraces:
-  Enabled: false
-
 RSpec/AnyInstance:
   Enabled: false
 
@@ -26,31 +23,13 @@ RSpec/MultipleExpectations:
 RSpec/VerifiedDoubles:
   Enabled: false
 
-Style/BlockDelimiters:
-  Enabled: false
-
 Style/Documentation:
-  Enabled: false
-
-Style/FetchEnvVar:
-  Enabled: false
-
-Style/FrozenStringLiteralComment:
   Enabled: false
 
 Style/OpenStructUse:
   Enabled: false
 
-Style/RaiseArgs:
-  Enabled: false
-
 Style/StringLiterals:
-  Enabled: false
-
-Style/StringLiteralsInInterpolation:
-  Enabled: false
-
-Style/TernaryParentheses:
   Enabled: false
 
 Style/WordArray:

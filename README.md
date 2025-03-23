@@ -336,7 +336,7 @@ As it could be seen in many examples, there's a parameter `wait-interval`, and s
 
 ### Verbose (optional, default: true)
 
-If true, it prints some logs to help understanding the process (checks found, filtered, conclussions, etc.)
+If true, it prints some logs to help understanding the process (checks found, filtered, conclusions, etc.)
 
 ## Auto-pagination
 

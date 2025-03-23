@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 require "ostruct"
 
@@ -21,7 +23,7 @@ describe GithubChecksVerifier do
 
   describe "#wait_for_checks" do
     it "waits until all checks are completed" do
-      cycles = 1 # simulates the method waiting for one cyecle
+      cycles = 1 # simulates the method waiting for one cycle
       allow(service).to receive(:all_checks_complete) do
         (cycles -= 1) && cycles < 0
       end
@@ -84,9 +86,9 @@ describe GithubChecksVerifier do
       allow(service).to receive(:query_check_status).and_return all_checks
 
       expected_msg = "The requested check was never run against this ref, exiting..."
-      expect {
+      expect do
         service.call
-      }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
   end
 
@@ -100,21 +102,21 @@ describe GithubChecksVerifier do
 
       expected_msg = "The conclusion of one or more checks were not allowed. Allowed conclusions are: " \
                      "success, skipped. This can be configured with the 'allowed-conclusions' param."
-      expect {
+      expect do
         service.call
-      }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
 
-    it "does not raise an exception if all checks conlusions are allowed" do
+    it "does not raise an exception if all checks conclusions are allowed" do
       all_checks = [
         OpenStruct.new(name: "test", status: "completed", conclusion: "success"),
         OpenStruct.new(name: "test", status: "completed", conclusion: "skipped")
       ]
       allow(service).to receive(:query_check_status).and_return all_checks
 
-      expect {
+      expect do
         service.call
-      }.not_to raise_error
+      end.not_to raise_error
     end
   end
 
