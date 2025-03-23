@@ -26,7 +26,7 @@ GithubChecksVerifier.configure do |config|
   config.client.access_token = token
   config.ref = ref
   config.repo = ENV.fetch('GITHUB_REPOSITORY', nil)
-  config.verbose = verbose
+  config.verbose = verbose == 'true'
   config.wait = wait.to_i
   config.workflow_name = workflow_name
 end
