@@ -28,7 +28,7 @@ class GithubChecksVerifier < ApplicationService
 
   def query_check_status
     checks = client.check_runs_for_ref(
-      repo, ref, {accept: "application/vnd.github.antiope-preview+json"}
+      repo, ref, { accept: "application/vnd.github.antiope-preview+json" }
     ).check_runs
     log_checks(checks, "Checks running on ref:")
 
@@ -82,7 +82,7 @@ class GithubChecksVerifier < ApplicationService
   def fail_unless_all_conclusions_allowed(checks)
     return if checks.all? { |check| check_conclusion_allowed(check) }
 
-    raise CheckConclusionNotAllowedError.new(allowed_conclusions)
+    raise CheckConclusionNotAllowedError, allowed_conclusions
   end
 
   def show_checks_conclusion_message(checks)
@@ -98,7 +98,7 @@ class GithubChecksVerifier < ApplicationService
     fail_if_requested_check_never_run(all_checks)
 
     until all_checks_complete(all_checks)
-      plural_part = (all_checks.length > 1) ? "checks aren't" : "check isn't"
+      plural_part = all_checks.length > 1 ? "checks aren't" : "check isn't"
       puts "The requested #{plural_part} complete yet, will check back in #{wait} seconds..."
       sleep(wait)
       all_checks = query_check_status

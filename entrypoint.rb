@@ -1,17 +1,20 @@
 #!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
 require_relative "app/services/github_checks_verifier"
 require "octokit"
 
-allowed_conclusions = ENV["ALLOWED_CONCLUSIONS"]
-check_name = ENV["CHECK_NAME"]
-check_regexp = ENV["CHECK_REGEXP"]
-ref = ENV["REF"]
-token = ENV["REPO_TOKEN"]
-verbose = ENV["VERBOSE"]
-wait = ENV["WAIT_INTERVAL"]
-workflow_name = ENV["RUNNING_WORKFLOW_NAME"]
+allowed_conclusions = ENV.fetch("ALLOWED_CONCLUSIONS", nil)
+check_name = ENV.fetch("CHECK_NAME", nil)
+check_regexp = ENV.fetch("CHECK_REGEXP", nil)
+ref = ENV.fetch("REF", nil)
+token = ENV.fetch("REPO_TOKEN", nil)
+verbose = ENV.fetch("VERBOSE", nil)
+wait = ENV.fetch("WAIT_INTERVAL", nil)
+workflow_name = ENV.fetch("RUNNING_WORKFLOW_NAME", nil)
 api_endpoint = ENV.fetch("API_ENDPOINT", "")
-ignore_checks = ENV["IGNORE_CHECKS"]
+ignore_checks = ENV.fetch("IGNORE_CHECKS", nil)
 
 GithubChecksVerifier.configure do |config|
   config.allowed_conclusions = allowed_conclusions.split(",").map(&:strip)
@@ -22,7 +25,7 @@ GithubChecksVerifier.configure do |config|
   config.client.api_endpoint = api_endpoint unless /\A[[:space:]]*\z/.match?(api_endpoint)
   config.client.access_token = token
   config.ref = ref
-  config.repo = ENV["GITHUB_REPOSITORY"]
+  config.repo = ENV.fetch("GITHUB_REPOSITORY", nil)
   config.verbose = verbose
   config.wait = wait.to_i
   config.workflow_name = workflow_name

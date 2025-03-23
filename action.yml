@@ -1,6 +1,6 @@
 # action.yml
 name: "Wait on check"
-author: "progapandist"
+author: "lewagon"
 description: "Wait on a certain check to pass for commit"
 inputs:
   allowed-conclusions:
