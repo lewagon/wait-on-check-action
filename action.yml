@@ -58,7 +58,7 @@ runs:
         BUNDLE_PATH: "vendor/bundle"
         BUNDLE_WITHOUT: "development"
 
-    - run: ruby entrypoint.rb
+    - run: bundle exec entrypoint.rb
       shell: bash
       env:
         ALLOWED_CONCLUSIONS: ${{ inputs.allowed-conclusions }}
