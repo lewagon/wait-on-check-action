@@ -1,9 +1,9 @@
 # Wait On Check Action
 
-[![StandardRB](https://github.com/lewagon/wait-on-check-action/actions/workflows/standardrb-linter.yml/badge.svg)](https://github.com/lewagon/wait-on-check-action/actions/workflows/standardrb-linter.yml)
-[![RSpec tests](https://github.com/lewagon/wait-on-check-action/actions/workflows/run-tests.yml/badge.svg)](https://github.com/lewagon/wait-on-check-action/actions/workflows/run-tests.yml)
-
 Pause a workflow until a job in another workflow completes successfully.
+
+![Review](https://img.shields.io/github/actions/workflow/status/lewagon/wait-on-check-action/review.yml)
+![Version](https://img.shields.io/github/v/tag/lewagon/wait-on-check-action)
 
 This action uses the [Checks API](https://docs.github.com/en/rest/checks) to poll for check results. On success, the action exit allowing the workflow resume. Otherwise, the action will exit with status code 1 and fail the whole workflow.
 
