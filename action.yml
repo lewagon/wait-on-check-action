@@ -58,9 +58,7 @@ runs:
         BUNDLE_PATH: "vendor/bundle"
         BUNDLE_WITHOUT: "development"
 
-    - run: |
-        ruby entrypoint.rb
-      working-directory: ${{ github.action_path }}
+    - run: ruby entrypoint.rb
       shell: bash
       env:
         ALLOWED_CONCLUSIONS: ${{ inputs.allowed-conclusions }}
@@ -73,6 +71,7 @@ runs:
         WAIT_INTERVAL: ${{ inputs.wait-interval }}
         RUNNING_WORKFLOW_NAME: ${{ inputs.running-workflow-name }}
         API_ENDPOINT: ${{ inputs.api-endpoint }}
+
 branding:
   icon: "check-circle"
   color: "green"
