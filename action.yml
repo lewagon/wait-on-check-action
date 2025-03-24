@@ -56,7 +56,6 @@ runs:
         bundler-cache: true
       env:
         BUNDLE_PATH: "vendor/bundle"
-        BUNDLE_WITHOUT: "development"
 
     - run: bundle exec entrypoint.rb
       shell: bash
