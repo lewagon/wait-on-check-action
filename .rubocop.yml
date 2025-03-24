@@ -1,4 +1,5 @@
 require:
+  - rubocop-performance
   - rubocop-rspec
 
 AllCops:
@@ -7,4 +8,3 @@ AllCops:
 RSpec/ExampleLength:
   Enabled: false
   Max: 10
-
