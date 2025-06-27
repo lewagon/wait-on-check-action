@@ -16,6 +16,7 @@
     "kubeconfig",
     "lewagon",
     "nodoc",
+    "rexml",
     "rubocop",
     "yardoc"
   ]
