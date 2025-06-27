@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.4.0 - 2025-06-27
+
 ### Added
 
 - Add class docs
