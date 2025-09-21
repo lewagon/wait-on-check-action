@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v1.4.1 - 2025-09-21
+
+### Fixed
+
+- Linux ARM64 support
+
 ## v1.4.0 - 2025-06-27
 
 ### Added
