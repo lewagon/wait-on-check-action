@@ -2,7 +2,7 @@
 
 Pause a workflow until a job in another workflow completes successfully.
 
-![Review](https://img.shields.io/github/actions/workflow/status/lewagon/wait-on-check-action/review.yml)
+![Review](https://img.shields.io/github/actions/workflow/status/lewagon/wait-on-check-action/review.yaml)
 ![Version](https://img.shields.io/github/v/tag/lewagon/wait-on-check-action)
 
 This action uses the [Checks API](https://docs.github.com/en/rest/checks) to poll for check results. On success, the action exit allowing the workflow resume. Otherwise, the action will exit with status code 1 and fail the whole workflow.
