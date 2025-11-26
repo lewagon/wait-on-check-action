@@ -5,10 +5,10 @@ runs:
   using: composite
   steps:
     - name: Checkout the source code
-      uses: actions/checkout@v4
+      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
 
     - name: Set the ruby version
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 # v1
       with:
         ruby-version: 3.2
         bundler-cache: true
