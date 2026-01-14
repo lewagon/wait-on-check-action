@@ -3,8 +3,10 @@
 source 'https://rubygems.org'
 
 gem 'activesupport', '~> 6.1.7'
+gem 'base64'
 gem 'faraday-retry', '~> 2.0.0'
 gem 'octokit', '~> 4.25.0'
+gem 'ostruct'
 
 group :development do
   gem 'byebug', '~> 11.1.3'
