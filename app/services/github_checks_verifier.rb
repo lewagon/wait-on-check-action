@@ -17,6 +17,7 @@ class GithubChecksVerifier < ApplicationService
   config_accessor(:allowed_conclusions) { %w[success skipped] }
   config_accessor(:verbose) { true }
   config_accessor(:ignore_checks) { [] }
+  config_accessor(:fail_on_no_checks) { true }
 
   def call
     wait_for_checks
@@ -76,6 +77,11 @@ class GithubChecksVerifier < ApplicationService
 
   def fail_if_requested_check_never_run(all_checks)
     return unless filters_present? && all_checks.blank?
+
+    unless fail_on_no_checks
+      puts 'No checks found matching the filter, but fail-on-no-checks is false. Succeeding...'
+      return
+    end
 
     raise CheckNeverRunError
   end

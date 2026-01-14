@@ -338,6 +338,33 @@ As it could be seen in many examples, there's a parameter `wait-interval`, and s
 
 If true, it prints some logs to help understanding the process (checks found, filtered, conclusions, etc.)
 
+### Fail on no checks (optional, default: true)
+
+By default, if you use `check-name` or `check-regexp` and no checks match the filter, the action will fail with the message "The requested check was never run against this ref, exiting...".
+
+If you want the action to succeed when no checks match the filter (useful for conditional workflows where certain checks only run on specific file changes), you can set `fail-on-no-checks` to `false`:
+
+```yaml
+name: Wait for optional checks
+on:
+  push:
+
+jobs:
+  wait-for-optional-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait on optional tests
+        uses: lewagon/wait-on-check-action@v1.4.1
+        with:
+          ref: ${{ github.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          running-workflow-name: wait-for-optional-checks
+          check-regexp: optional-.*
+          fail-on-no-checks: false
+```
+
 ## Auto-pagination
 
 Since we are using Octokit for using GitHub API, we are subject to their limitations. One of them is the pagination max size: if we have more than 100 workflows running, the auto-pagination won't help.
