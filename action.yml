@@ -41,6 +41,10 @@ inputs:
     description: "Print logs if true"
     required: false
     default: true
+  fail-on-no-checks:
+    description: "Fail the action if no checks match the filter (check-name or check-regexp). Set to false to succeed when no checks match."
+    required: false
+    default: true
 
 runs:
   using: "composite"
@@ -68,6 +72,7 @@ runs:
         WAIT_INTERVAL: ${{ inputs.wait-interval }}
         RUNNING_WORKFLOW_NAME: ${{ inputs.running-workflow-name }}
         API_ENDPOINT: ${{ inputs.api-endpoint }}
+        FAIL_ON_NO_CHECKS: ${{ inputs.fail-on-no-checks }}
 
 branding:
   icon: "check-circle"

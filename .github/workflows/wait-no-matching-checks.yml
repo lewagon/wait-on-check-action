@@ -1,0 +1,23 @@
+name: Wait with no matching checks (fail-on-no-checks=false)
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  wait-no-matching-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait with non-matching regexp (should succeed)
+        uses: ./
+        with:
+          ref: ${{ github.sha }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+          running-workflow-name: wait-no-matching-checks
+          check-regexp: this-regexp-will-never-match-anything
+          fail-on-no-checks: false
+
+      - name: Success
+        run: echo 'Successfully handled no matching checks!'

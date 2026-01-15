@@ -93,6 +93,67 @@ describe GithubChecksVerifier do
         service.call
       end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
+
+    context 'when fail_on_no_checks is false' do
+      before do
+        service.config.fail_on_no_checks = false
+        allow(service).to receive(:query_check_status).and_return []
+      end
+
+      it 'does not raise an exception when check_regexp is set and no checks match' do
+        service.config.check_regexp = 'non-matching-regexp'
+
+        expect { service.call }.not_to raise_error
+      end
+
+      it 'prints success message when check_regexp is set and no checks match' do
+        service.config.check_regexp = 'non-matching-regexp'
+
+        expected_msg = 'No checks found matching the filter, but fail-on-no-checks is false. Succeeding...'
+        output = with_captured_stdout { service.call }
+        expect(output).to include(expected_msg)
+      end
+
+      it 'does not raise an exception when check_name is set and no checks match' do
+        service.config.check_name = 'non-existing-check'
+
+        expect { service.call }.not_to raise_error
+      end
+
+      it 'prints success message when check_name is set and no checks match' do
+        service.config.check_name = 'non-existing-check'
+
+        expected_msg = 'No checks found matching the filter, but fail-on-no-checks is false. Succeeding...'
+        output = with_captured_stdout { service.call }
+        expect(output).to include(expected_msg)
+      end
+    end
+
+    context 'when fail_on_no_checks is true (default)' do
+      it 'raises an exception when check_regexp is set and no checks match' do
+        service.config.check_regexp = 'non-matching-regexp'
+        service.config.fail_on_no_checks = true
+        all_checks = []
+        allow(service).to receive(:query_check_status).and_return all_checks
+
+        expected_msg = 'The requested check was never run against this ref, exiting...'
+        expect do
+          service.call
+        end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      end
+
+      it 'raises an exception when check_name is set and no checks match' do
+        service.config.check_name = 'non-existing-check'
+        service.config.fail_on_no_checks = true
+        all_checks = []
+        allow(service).to receive(:query_check_status).and_return all_checks
+
+        expected_msg = 'The requested check was never run against this ref, exiting...'
+        expect do
+          service.call
+        end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      end
+    end
   end
 
   describe '#fail_unless_all_conclusions_allowed' do
