@@ -141,6 +141,18 @@ describe GithubChecksVerifier do
           service.call
         end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
       end
+
+      it 'raises an exception when check_name is set and no checks match' do
+        service.config.check_name = 'non-existing-check'
+        service.config.fail_on_no_checks = true
+        all_checks = []
+        allow(service).to receive(:query_check_status).and_return all_checks
+
+        expected_msg = 'The requested check was never run against this ref, exiting...'
+        expect do
+          service.call
+        end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      end
     end
   end
 
