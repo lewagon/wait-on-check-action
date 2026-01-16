@@ -1,44 +1,43 @@
 name: "Wait on check"
 author: "lewagon"
-description: "Wait on a certain check to pass for commit"
+description: "Pause until a job in another workflow completes successfully."
 inputs:
   allowed-conclusions:
-    description: "Array of allowed conclusions"
+    description: "Comma-separated list of acceptable conclusions"
     required: false
     default: success,skipped
   ignore-checks:
-    description: "Array of ignore checks"
+    description: "Comma-separated list of checks to ignore"
     required: false
     default: ""
   check-name:
-    description: "A name of a check that has to pass"
+    description: "Specific check name to wait for"
     required: false
     default: ""
   check-regexp:
-    description: "Filter checks to wait using Regexp"
+    description: "Filter checks using regex pattern"
     required: false
     default: ""
   ref:
-    description: "A git ref to be checked: branch/tag/commit sha"
+    description: "Git ref to check (branch/tag/commit SHA)"
     required: true
   repo-token:
-    description: "A GitHub token for the repo"
+    description: "GitHub token for API access"
     required: false
-    default: ""
   wait-interval:
-    description: "Seconds to wait between Checks API requests"
+    description: "Seconds between API requests"
     required: false
     default: "10"
   api-endpoint:
-    description: "Github API Endpoint to use."
+    description: "Custom GitHub API endpoint (for GHE)"
     required: false
     default: ""
   running-workflow-name:
-    description: "Name of the workflow to be ignored (the one who is waiting for the rest)"
+    description: "Name of current workflow (to exclude from waiting)"
     required: false
     default: ""
   verbose:
-    description: "Print logs if true"
+    description: "Print detailed logs"
     required: false
     default: true
 
