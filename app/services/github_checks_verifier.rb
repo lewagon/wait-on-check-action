@@ -13,12 +13,7 @@ require 'octokit'
 class GithubChecksVerifier < ApplicationService
   include ActiveSupport::Configurable
 
-  # GitHub inputs
-  config_accessor :client, :repo
-
-  # Required inputs
-  config_accessor :ref, :token
-
+  config_accessor :client, :ref, :repo
   config_accessor(:allowed_conclusions) { %w[success skipped] }
   config_accessor(:check_name) { '' }
   config_accessor(:check_regexp) { '' }
@@ -40,7 +35,7 @@ class GithubChecksVerifier < ApplicationService
 
   def validate_inputs
     raise RequiredInputError, 'ref' if ref.blank?
-    raise RequiredInputError, 'repo-token' if token.blank?
+    raise RequiredInputError, 'repo-token' if client.access_token.blank?
   end
 
   def query_check_status

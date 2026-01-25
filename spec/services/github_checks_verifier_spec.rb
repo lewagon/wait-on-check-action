@@ -22,7 +22,7 @@ describe GithubChecksVerifier do
 
     it 'raises an error when the repo-token input is empty' do
       service.config.ref = '_'
-      service.config.token = ''
+      service.config.client.access_token = ''
       expected_msg = 'The repo-token parameter is required but was not provided.'
       expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
@@ -33,7 +33,7 @@ describe GithubChecksVerifier do
 
     it 'exit with status false if wait_for_checks fails' do
       service.config.ref = '_'
-      service.config.token = '_'
+      service.config.client.access_token = '_'
       expected_msg = 'The requested check was never run against this ref, exiting...'
       expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
