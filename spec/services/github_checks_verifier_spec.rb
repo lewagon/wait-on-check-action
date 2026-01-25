@@ -23,7 +23,9 @@ describe GithubChecksVerifier do
 
   describe '#wait_for_checks' do
     it 'waits until all checks are completed' do
-      cycles = 1 # simulates the method waiting for one cycle
+      # simulates the method waiting for one cycle
+      cycles = 1
+
       allow(service).to receive(:all_checks_complete) do
         (cycles -= 1) && cycles < 0
       end
@@ -35,7 +37,6 @@ describe GithubChecksVerifier do
       service.workflow_name = 'invoking_check'
       service.wait = 0
       output = with_captured_stdout { service.call }
-
       expect(output).to include("The requested check isn't complete yet, will check back in #{service.wait} seconds...")
     end
   end
@@ -46,6 +47,7 @@ describe GithubChecksVerifier do
         Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'success'),
         Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'failure')
       ]
+
       expect(service.send(:all_checks_complete, checks)).to be true
     end
 
@@ -55,6 +57,7 @@ describe GithubChecksVerifier do
           Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'success'),
           Helpers::CheckRun.new(name: 'test', status: 'queued', conclusion: nil)
         ]
+
         expect(service.send(:all_checks_complete, checks)).to be false
       end
 
@@ -63,6 +66,7 @@ describe GithubChecksVerifier do
           Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'success'),
           Helpers::CheckRun.new(name: 'test', status: 'in_progress', conclusion: nil)
         ]
+
         expect(service.send(:all_checks_complete, checks)).to be false
       end
     end
@@ -75,7 +79,6 @@ describe GithubChecksVerifier do
         .to receive(:check_runs_for_ref) { Helpers::CheckRunsResponse.new(all_checks) }
 
       service.config.workflow_name = 'invoking_check'
-
       result = service.send(:query_check_status)
 
       expect(result.map(&:name)).not_to include('invoking_check')
@@ -85,13 +88,12 @@ describe GithubChecksVerifier do
   describe '#fail_if_requested_check_never_run' do
     it 'raises an exception if check_name is not empty and all_checks is' do
       service.config.check_name = 'test'
+
       all_checks = []
       allow(service).to receive(:query_check_status).and_return all_checks
 
       expected_msg = 'The requested check was never run against this ref, exiting...'
-      expect do
-        service.call
-      end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
 
     context 'when fail_on_no_checks is false' do
@@ -102,13 +104,11 @@ describe GithubChecksVerifier do
 
       it 'does not raise an exception when check_regexp is set and no checks match' do
         service.config.check_regexp = 'non-matching-regexp'
-
         expect { service.call }.not_to raise_error
       end
 
       it 'prints success message when check_regexp is set and no checks match' do
         service.config.check_regexp = 'non-matching-regexp'
-
         expected_msg = 'No checks found matching the filter, but fail-on-no-checks is false. Succeeding...'
         output = with_captured_stdout { service.call }
         expect(output).to include(expected_msg)
@@ -116,13 +116,11 @@ describe GithubChecksVerifier do
 
       it 'does not raise an exception when check_name is set and no checks match' do
         service.config.check_name = 'non-existing-check'
-
         expect { service.call }.not_to raise_error
       end
 
       it 'prints success message when check_name is set and no checks match' do
         service.config.check_name = 'non-existing-check'
-
         expected_msg = 'No checks found matching the filter, but fail-on-no-checks is false. Succeeding...'
         output = with_captured_stdout { service.call }
         expect(output).to include(expected_msg)
@@ -133,25 +131,23 @@ describe GithubChecksVerifier do
       it 'raises an exception when check_regexp is set and no checks match' do
         service.config.check_regexp = 'non-matching-regexp'
         service.config.fail_on_no_checks = true
+
         all_checks = []
         allow(service).to receive(:query_check_status).and_return all_checks
 
         expected_msg = 'The requested check was never run against this ref, exiting...'
-        expect do
-          service.call
-        end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+        expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
       end
 
       it 'raises an exception when check_name is set and no checks match' do
         service.config.check_name = 'non-existing-check'
         service.config.fail_on_no_checks = true
+
         all_checks = []
         allow(service).to receive(:query_check_status).and_return all_checks
 
         expected_msg = 'The requested check was never run against this ref, exiting...'
-        expect do
-          service.call
-        end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+        expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
       end
     end
   end
@@ -162,13 +158,13 @@ describe GithubChecksVerifier do
         Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'success'),
         Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'failure')
       ]
+
       allow(service).to receive(:query_check_status).and_return all_checks
 
       expected_msg = 'The conclusion of one or more checks were not allowed. Allowed conclusions are: ' \
                      "success, skipped. This can be configured with the 'allowed-conclusions' param."
-      expect do
-        service.call
-      end.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+
+      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
 
     it 'does not raise an exception if all checks conclusions are allowed' do
@@ -176,11 +172,9 @@ describe GithubChecksVerifier do
         Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'success'),
         Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'skipped')
       ]
-      allow(service).to receive(:query_check_status).and_return all_checks
 
-      expect do
-        service.call
-      end.not_to raise_error
+      allow(service).to receive(:query_check_status).and_return all_checks
+      expect { service.call }.not_to raise_error
     end
   end
 
@@ -189,7 +183,6 @@ describe GithubChecksVerifier do
       checks = [Helpers::CheckRun.new(name: 'check_completed', status: 'completed', conclusion: 'success')]
       allow(service).to receive(:query_check_status).and_return checks
       output = with_captured_stdout { service.call }
-
       expect(output).to include('check_completed: completed (success)')
     end
   end
@@ -227,7 +220,6 @@ describe GithubChecksVerifier do
       service.config.ignore_checks = []
       allow(service).to receive(:apply_regexp_filter).with(checks).and_return(checks)
       service.send(:apply_filters, checks)
-
       expect(checks.size).to eq 2
     end
 
@@ -236,9 +228,9 @@ describe GithubChecksVerifier do
         Helpers::CheckRun.new(name: 'workflow_name', status: 'pending'),
         Helpers::CheckRun.new(name: 'other_check', status: 'queued')
       ]
+
       service.config.workflow_name = 'workflow_name'
       service.send(:apply_filters, checks)
-
       expect(checks.map(&:name)).not_to include('workflow_name')
     end
 
@@ -247,9 +239,9 @@ describe GithubChecksVerifier do
         Helpers::CheckRun.new(name: 'test1', status: 'completed', conclusion: 'success'),
         Helpers::CheckRun.new(name: 'test2', status: 'completed', conclusion: 'skipped')
       ]
+
       service.config.ignore_checks = []
       service.send(:apply_filters, checks)
-
       expect(checks.size).to eq 2
     end
 
@@ -258,8 +250,10 @@ describe GithubChecksVerifier do
         Helpers::CheckRun.new(name: 'test', status: 'pending'),
         Helpers::CheckRun.new(name: 'test', status: 'queued')
       ]
+
       allow(service).to receive(:apply_regexp_filter)
       service.send(:apply_filters, checks)
+
       # only assert that the method is called. The functionality will be tested
       # on #apply_regexp_filter tests
       expect(service).to have_received(:apply_regexp_filter)
@@ -275,7 +269,6 @@ describe GithubChecksVerifier do
 
       service.check_regexp = '.?_check'
       service.send(:apply_regexp_filter, checks)
-
       expect(checks.map(&:name)).to contain_exactly('other_check')
     end
 
@@ -287,7 +280,6 @@ describe GithubChecksVerifier do
 
       service.check_regexp = '\A[\w.+-]+@\w+\.\w+\z'
       service.send(:apply_regexp_filter, checks)
-
       expect(checks.map(&:name)).to contain_exactly('test@example.com')
     end
   end
