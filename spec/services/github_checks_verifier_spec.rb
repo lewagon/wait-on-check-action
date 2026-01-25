@@ -13,11 +13,29 @@ describe GithubChecksVerifier do
     described_class.config.allowed_conclusions = %w[success skipped]
   end
 
+  describe '#inputs' do
+    it 'raises an error when the ref input is empty' do
+      service.config.ref = ''
+      expected_msg = 'The ref parameter is required but was not provided.'
+      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+    end
+
+    it 'raises an error when the repo-token input is empty' do
+      service.config.ref = '_'
+      service.config.repo_token = ''
+      expected_msg = 'The repo-token parameter is required but was not provided.'
+      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+    end
+  end
+
   describe '#call' do
     before { allow(service).to receive(:wait_for_checks).and_raise(CheckNeverRunError) }
 
     it 'exit with status false if wait_for_checks fails' do
-      expect { service.call }.to raise_error(SystemExit)
+      service.config.ref = '_'
+      service.config.repo_token = '_'
+      expected_msg = 'The requested check was never run against this ref, exiting...'
+      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
   end
 
