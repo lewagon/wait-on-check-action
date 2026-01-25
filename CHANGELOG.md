@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## v1.5.0 - 2026-01-25
+
+### Added
+
+- Add `fail-on-no-checks` option
+
+### Fixed
+
+- Bump `rexml` to 3.4.2
+
 ## v1.4.1 - 2025-09-21
 
 ### Fixed
