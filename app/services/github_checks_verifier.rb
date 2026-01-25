@@ -17,7 +17,7 @@ class GithubChecksVerifier < ApplicationService
   config_accessor :client, :repo
 
   # Required inputs
-  config_accessor :ref, :repo_token
+  config_accessor :ref, :token
 
   config_accessor(:allowed_conclusions) { %w[success skipped] }
   config_accessor(:check_name) { '' }
@@ -40,7 +40,7 @@ class GithubChecksVerifier < ApplicationService
 
   def validate_inputs
     raise RequiredInputError, 'ref' if ref.blank?
-    raise RequiredInputError, 'repo-token' if repo_token.blank?
+    raise RequiredInputError, 'repo-token' if token.blank?
   end
 
   def query_check_status
