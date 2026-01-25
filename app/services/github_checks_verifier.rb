@@ -29,13 +29,19 @@ class GithubChecksVerifier < ApplicationService
   config_accessor(:workflow_name) { '' }
 
   def call
+    validate_inputs
     wait_for_checks
-  rescue CheckNeverRunError, CheckConclusionNotAllowedError => e
+  rescue CheckNeverRunError, CheckConclusionNotAllowedError, RequiredInputError => e
     puts e.message
     exit(false)
   end
 
   private
+
+  def validate_inputs
+    raise RequiredInputError, 'ref' if ref.blank?
+    raise RequiredInputError, 'repo-token' if repo_token.blank?
+  end
 
   def query_check_status
     checks = client.check_runs_for_ref(
