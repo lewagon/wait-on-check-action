@@ -3,6 +3,7 @@
 require_relative 'application_service'
 require_relative '../errors/check_conclusion_not_allowed_error'
 require_relative '../errors/check_never_run_error'
+require_relative '../errors/required_input_error'
 require 'active_support/configurable'
 
 require 'json'
@@ -11,22 +12,31 @@ require 'octokit'
 # Verifies the status of GitHub checks for a given repository.
 class GithubChecksVerifier < ApplicationService
   include ActiveSupport::Configurable
-  config_accessor :check_name, :workflow_name, :client, :repo, :ref
-  config_accessor(:wait) { 30 } # set a default
-  config_accessor(:check_regexp) { '' }
+
+  config_accessor :client, :ref, :repo
   config_accessor(:allowed_conclusions) { %w[success skipped] }
-  config_accessor(:verbose) { true }
-  config_accessor(:ignore_checks) { [] }
+  config_accessor(:check_name) { '' }
+  config_accessor(:check_regexp) { '' }
   config_accessor(:fail_on_no_checks) { true }
+  config_accessor(:ignore_checks) { [] }
+  config_accessor(:verbose) { true }
+  config_accessor(:wait) { 30 }
+  config_accessor(:workflow_name) { '' }
 
   def call
+    validate_inputs
     wait_for_checks
-  rescue CheckNeverRunError, CheckConclusionNotAllowedError => e
+  rescue CheckNeverRunError, CheckConclusionNotAllowedError, RequiredInputError => e
     puts e.message
-    exit(false)
+    raise SystemExit
   end
 
   private
+
+  def validate_inputs
+    raise RequiredInputError, 'ref' if ref.blank?
+    raise RequiredInputError, 'repo-token' if client.access_token.blank?
+  end
 
   def query_check_status
     checks = client.check_runs_for_ref(

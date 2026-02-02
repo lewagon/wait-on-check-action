@@ -66,24 +66,24 @@ jobs:
 
 ### Required inputs
 
-| Input | Description                              | Example             |
-| ----- | ---------------------------------------- | ------------------- |
-| `ref` | Git ref to check (branch/tag/commit SHA) | `${{ github.ref }}` |
+| Input        | Description                              | Example                       |
+| ------------ | ---------------------------------------- | ----------------------------- |
+| `ref`        | Git ref to check (branch/tag/commit SHA) | `${{ github.ref }}`           |
+| `repo-token` | GitHub token for API access              | `${{ secrets.GITHUB_TOKEN }}` |
 
 ### Optional inputs
 
-| Input                   | Description                                                                                                               | Example                               | Default           |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ----------------- |
-| `allowed-conclusions`   | Comma-separated list of acceptable conclusions                                                                            | `success,skipped`                     | `success,skipped` |
-| `api-endpoint`          | Custom GitHub API endpoint (for GHE)                                                                                      | `https://github.mycompany.com/api/v3` | -                 |
-| `check-name`            | Specific check name to wait for                                                                                           | `"Run tests"`                         | -                 |
-| `check-regexp`          | Filter checks using regex pattern                                                                                         | `"test-.*"`                           | -                 |
-| `fail-on-no-checks`     | Fail the action if no checks match the filter (check-name or check-regexp). Set to false to succeed when no checks match. | `true`                                | `true`            |
-| `ignore-checks`         | Comma-separated list of checks to ignore                                                                                  | `optional-lint,coverage-report`       | -                 |
-| `repo-token`            | GitHub token for API access                                                                                               | `${{ secrets.GITHUB_TOKEN }}`         | -                 |
-| `running-workflow-name` | Name of current workflow (to exclude from waiting)                                                                        | `"Deploy"`                            | -                 |
-| `verbose`               | Print detailed logs                                                                                                       | `true`                                | `true`            |
-| `wait-interval`         | Seconds between API requests                                                                                              | `10`                                  | `10`              |
+| Input                   | Description                                                               | Example                               | Default           |
+| ----------------------- | ------------------------------------------------------------------------- | ------------------------------------- | ----------------- |
+| `allowed-conclusions`   | Comma-separated list of acceptable conclusions                            | `success,skipped`                     | `success,skipped` |
+| `api-endpoint`          | Custom GitHub API endpoint (for GHE)                                      | `https://github.mycompany.com/api/v3` | -                 |
+| `check-name`            | Specific check name to wait for                                           | `"Run tests"`                         | -                 |
+| `check-regexp`          | Filter checks using regex pattern                                         | `"test-.*"`                           | -                 |
+| `fail-on-no-checks`     | Fail the action if no checks match the check-name or check-regexp filters | `true`                                | `true`            |
+| `ignore-checks`         | Comma-separated list of checks to ignore                                  | `optional-lint,coverage-report`       | -                 |
+| `running-workflow-name` | Name of current workflow (to exclude from waiting)                        | `"Deploy"`                            | -                 |
+| `verbose`               | Print detailed logs                                                       | `true`                                | `true`            |
+| `wait-interval`         | Seconds between API requests                                              | `10`                                  | `10`              |
 
 ## Usage examples
 

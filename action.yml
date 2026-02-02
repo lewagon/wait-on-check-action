@@ -23,7 +23,7 @@ inputs:
     required: true
   repo-token:
     description: "GitHub token for API access"
-    required: false
+    required: true
   wait-interval:
     description: "Seconds between API requests"
     required: false
@@ -41,7 +41,7 @@ inputs:
     required: false
     default: true
   fail-on-no-checks:
-    description: "Fail the action if no checks match the filter (check-name or check-regexp). Set to false to succeed when no checks match."
+    description: "Fail the action if no checks match the check-name or check-regexp filters"
     required: false
     default: true
 
