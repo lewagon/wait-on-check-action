@@ -77,14 +77,12 @@ class GithubChecksVerifier < ApplicationService
   def wait_for_check_discovery(all_checks)
     return all_checks unless filters_present? && all_checks.blank? && fail_on_no_checks
 
-    deadline = Time.now + discovery_timeout
-    while all_checks.blank? && Time.now < deadline
+    wait_until = Time.now + discovery_timeout
+    while all_checks.blank? && Time.now < wait_until
       puts "Matching checks have not been found yet, will check again in #{wait} seconds. " \
            "(Limit: #{discovery_timeout}s)"
-      sleep(wait)
-      all_checks = query_check_status
+      all_checks = (sleep(wait) && query_check_status)
     end
-
     all_checks
   end
 
