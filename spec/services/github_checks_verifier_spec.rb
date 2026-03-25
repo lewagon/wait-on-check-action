@@ -106,6 +106,7 @@ describe GithubChecksVerifier do
   describe '#fail_if_requested_check_never_run' do
     it 'raises an exception if check_name is not empty and all_checks is' do
       service.config.check_name = 'test'
+      service.config.discovery_timeout = 0
 
       all_checks = []
       allow(service).to receive(:query_check_status).and_return all_checks
@@ -149,6 +150,7 @@ describe GithubChecksVerifier do
       it 'raises an exception when check_regexp is set and no checks match' do
         service.config.check_regexp = 'non-matching-regexp'
         service.config.fail_on_no_checks = true
+        service.config.discovery_timeout = 0
 
         all_checks = []
         allow(service).to receive(:query_check_status).and_return all_checks
@@ -160,6 +162,7 @@ describe GithubChecksVerifier do
       it 'raises an exception when check_name is set and no checks match' do
         service.config.check_name = 'non-existing-check'
         service.config.fail_on_no_checks = true
+        service.config.discovery_timeout = 0
 
         all_checks = []
         allow(service).to receive(:query_check_status).and_return all_checks
@@ -167,6 +170,55 @@ describe GithubChecksVerifier do
         expected_msg = 'The requested check was never run against this ref, exiting...'
         expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
       end
+    end
+  end
+
+  describe '#wait_for_check_discovery' do
+    before do
+      service.config.ref = '_'
+      service.config.client.access_token = '_'
+    end
+
+    it 'polls until checks are found within the timeout' do
+      service.config.check_name = 'delayed-check'
+      service.config.fail_on_no_checks = true
+      service.config.discovery_timeout = 30
+      service.wait = 0
+
+      completed_check = [Helpers::CheckRun.new(name: 'delayed-check', status: 'completed', conclusion: 'success')]
+      call_count = 0
+      allow(service).to receive(:query_check_status) do
+        call_count += 1
+        call_count < 3 ? [] : completed_check
+      end
+
+      output = with_captured_stdout { service.call }
+      expect(output).to include('Matching checks have not been found yet')
+      expect(call_count).to eq(3)
+    end
+
+    it 'skips discovery polling when fail_on_no_checks is false' do
+      service.config.check_name = 'non-existing-check'
+      service.config.fail_on_no_checks = false
+      service.config.discovery_timeout = 30
+
+      allow(service).to receive(:query_check_status).and_return []
+
+      output = with_captured_stdout { service.call }
+      expect(output).not_to include('Matching checks have not been found yet')
+      expect(output).to include('No checks found matching the filter, but fail-on-no-checks is false')
+    end
+
+    it 'fails after discovery timeout is exceeded' do
+      service.config.check_name = 'never-found-check'
+      service.config.fail_on_no_checks = true
+      service.config.discovery_timeout = 0
+      service.wait = 0
+
+      allow(service).to receive(:query_check_status).and_return []
+
+      expected_msg = 'The requested check was never run against this ref, exiting...'
+      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
   end
 
