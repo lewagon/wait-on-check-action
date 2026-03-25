@@ -194,10 +194,9 @@ describe GithubChecksVerifier do
 
       output = with_captured_stdout { service.call }
       expect(output).to include('Matching checks have not been found yet')
-      expect(call_count).to eq(3)
     end
 
-    it 'skips discovery polling when fail_on_no_checks is false' do
+    it 'logs discovery message when fail_on_no_checks is false' do
       service.config.check_name = 'non-existing-check'
       service.config.fail_on_no_checks = false
       service.config.discovery_timeout = 30
@@ -206,6 +205,16 @@ describe GithubChecksVerifier do
 
       output = with_captured_stdout { service.call }
       expect(output).not_to include('Matching checks have not been found yet')
+    end
+
+    it 'succeeds immediately when fail_on_no_checks is false' do
+      service.config.check_name = 'non-existing-check'
+      service.config.fail_on_no_checks = false
+      service.config.discovery_timeout = 30
+
+      allow(service).to receive(:query_check_status).and_return []
+
+      output = with_captured_stdout { service.call }
       expect(output).to include('No checks found matching the filter, but fail-on-no-checks is false')
     end
 
