@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v1.5.1 - 2026-03-25
+
+### Added
+
+- Add `checks-discovery-timeout` option to poll for checks that haven't been created yet (e.g. jobs with `needs` dependencies) (#137)
+
 ## v1.5.0 - 2026-01-25
 
 ### Added
