@@ -20,6 +20,7 @@ class GithubChecksVerifier < ApplicationService
   config_accessor(:fail_on_no_checks) { true }
   config_accessor(:ignore_checks) { [] }
   config_accessor(:verbose) { true }
+  config_accessor(:discovery_timeout) { 60 }
   config_accessor(:wait) { 30 }
   config_accessor(:workflow_name) { '' }
 
@@ -73,6 +74,18 @@ class GithubChecksVerifier < ApplicationService
     checks.select! { |check| check.name[Regexp.new(check_regexp)] } if check_regexp.present?
   end
 
+  def wait_for_check_discovery(all_checks)
+    return all_checks unless filters_present? && all_checks.blank? && fail_on_no_checks
+
+    wait_until = Time.now + discovery_timeout
+    while all_checks.blank? && Time.now < wait_until
+      puts "Matching checks have not been found yet, will check again in #{wait} seconds. " \
+           "(Limit: #{discovery_timeout}s)"
+      all_checks = (sleep(wait) && query_check_status)
+    end
+    all_checks
+  end
+
   def all_checks_complete(checks)
     checks.all? { |check| check.status == 'completed' }
   end
@@ -110,8 +123,7 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def wait_for_checks
-    all_checks = query_check_status
-
+    all_checks = wait_for_check_discovery(query_check_status)
     fail_if_requested_check_never_run(all_checks)
 
     until all_checks_complete(all_checks)

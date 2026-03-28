@@ -44,6 +44,10 @@ inputs:
     description: "Fail the action if no checks match the check-name or check-regexp filters"
     required: false
     default: true
+  checks-discovery-timeout:
+    description: "Seconds to wait for checks to be discovered before failing (useful for jobs with needs dependencies)"
+    required: false
+    default: "60"
 
 runs:
   using: "composite"
@@ -72,6 +76,7 @@ runs:
         RUNNING_WORKFLOW_NAME: ${{ inputs.running-workflow-name }}
         API_ENDPOINT: ${{ inputs.api-endpoint }}
         FAIL_ON_NO_CHECKS: ${{ inputs.fail-on-no-checks }}
+        CHECKS_DISCOVERY_TIMEOUT: ${{ inputs.checks-discovery-timeout }}
 
 branding:
   icon: "check-circle"
