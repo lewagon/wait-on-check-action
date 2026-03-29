@@ -45,7 +45,7 @@ inputs:
     required: false
     default: true
   checks-discovery-timeout:
-    description: "Seconds to wait for checks to be discovered before failing (useful for jobs with needs dependencies)"
+    description: "Seconds to wait for checks to be discovered"
     required: false
     default: "60"
 

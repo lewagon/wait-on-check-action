@@ -73,17 +73,18 @@ jobs:
 
 ### Optional inputs
 
-| Input                   | Description                                                               | Example                               | Default           |
-| ----------------------- | ------------------------------------------------------------------------- | ------------------------------------- | ----------------- |
-| `allowed-conclusions`   | Comma-separated list of acceptable conclusions                            | `success,skipped`                     | `success,skipped` |
-| `api-endpoint`          | Custom GitHub API endpoint (for GHE)                                      | `https://github.mycompany.com/api/v3` | -                 |
-| `check-name`            | Specific check name to wait for                                           | `"Run tests"`                         | -                 |
-| `check-regexp`          | Filter checks using regex pattern                                         | `"test-.*"`                           | -                 |
-| `fail-on-no-checks`     | Fail the action if no checks match the check-name or check-regexp filters | `true`                                | `true`            |
-| `ignore-checks`         | Comma-separated list of checks to ignore                                  | `optional-lint,coverage-report`       | -                 |
-| `running-workflow-name` | Name of current workflow (to exclude from waiting)                        | `"Deploy"`                            | -                 |
-| `verbose`               | Print detailed logs                                                       | `true`                                | `true`            |
-| `wait-interval`         | Seconds between API requests                                              | `10`                                  | `10`              |
+| Input                      | Description                                                               | Example                               | Default           |
+| -------------------------- | ------------------------------------------------------------------------- | ------------------------------------- | ----------------- |
+| `allowed-conclusions`      | Comma-separated list of acceptable conclusions                            | `success,skipped`                     | `success,skipped` |
+| `api-endpoint`             | Custom GitHub API endpoint (for GHE)                                      | `https://github.mycompany.com/api/v3` | -                 |
+| `check-name`               | Specific check name to wait for                                           | `"Run tests"`                         | -                 |
+| `check-regexp`             | Filter checks using regex pattern                                         | `"test-.*"`                           | -                 |
+| `fail-on-no-checks`        | Fail the action if no checks match the check-name or check-regexp filters | `true`                                | `true`            |
+| `ignore-checks`            | Comma-separated list of checks to ignore                                  | `optional-lint,coverage-report`       | -                 |
+| `running-workflow-name`    | Name of current workflow (to exclude from waiting)                        | `"Deploy"`                            | -                 |
+| `verbose`                  | Print detailed logs                                                       | `true`                                | `true`            |
+| `wait-interval`            | Seconds between API requests                                              | `10`                                  | `10`              |
+| `checks-discovery-timeout` | Seconds to wait for checks to be discovered                               | `60`                                  | `60`              |
 
 ## Usage examples
 
@@ -172,6 +173,31 @@ jobs:
           running-workflow-name: wait-for-optional-checks
           check-regexp: optional-.*
           fail-on-no-checks: false
+```
+
+### Wait for a check that doesn't exist yet
+
+When a job uses `needs` it isn't created until the dependent jobs are completed.
+
+If you want to extend the discovery time window to wait for jobs to be created, you can set `checks-discovery-timeout`:
+
+```yaml
+jobs:
+  setup:
+    # Some slow setup job
+  test:
+    needs: setup
+    name: Run Tests
+```
+
+```yaml
+- name: Wait for tests
+  uses: lewagon/wait-on-check-action@v1.5.0
+  with:
+    ref: ${{ github.ref }}
+    check-name: "Run tests"
+    repo-token: ${{ secrets.GITHUB_TOKEN }}
+    checks-discovery-timeout: 300
 ```
 
 ## Understanding check names
