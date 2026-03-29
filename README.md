@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for tests to succeed
-        uses: lewagon/wait-on-check-action@v1.5.0
+        uses: lewagon/wait-on-check-action@v1.6.0
         with:
           ref: ${{ github.ref }}
           check-name: "Run tests"
@@ -92,7 +92,7 @@ jobs:
 
 ```yaml
 - name: Wait for tests
-  uses: lewagon/wait-on-check-action@v1.5.0
+  uses: lewagon/wait-on-check-action@v1.6.0
   with:
     ref: ${{ github.ref }}
     check-name: "Run tests"
@@ -108,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for other checks to succeed
-        uses: lewagon/wait-on-check-action@v1.5.0
+        uses: lewagon/wait-on-check-action@v1.6.0
         with:
           ref: ${{ github.ref }}
           running-workflow-name: "Publish the package"
@@ -119,7 +119,7 @@ jobs:
 
 ```yaml
 - name: Wait for all test jobs
-  uses: lewagon/wait-on-check-action@v1.5.0
+  uses: lewagon/wait-on-check-action@v1.6.0
   with:
     ref: ${{ github.sha }}
     check-regexp: "test-.*"
@@ -130,7 +130,7 @@ jobs:
 
 ```yaml
 - name: Wait for checks (allow cancelled)
-  uses: lewagon/wait-on-check-action@v1.5.0
+  uses: lewagon/wait-on-check-action@v1.6.0
   with:
     ref: ${{ github.ref }}
     check-name: "Run tests"
@@ -142,7 +142,7 @@ jobs:
 
 ```yaml
 - name: Wait for checks (ignore some)
-  uses: lewagon/wait-on-check-action@v1.5.0
+  uses: lewagon/wait-on-check-action@v1.6.0
   with:
     ref: ${{ github.sha }}
     running-workflow-name: "Deploy"
@@ -166,7 +166,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Wait on optional tests
-        uses: lewagon/wait-on-check-action@v1.5.0
+        uses: lewagon/wait-on-check-action@v1.6.0
         with:
           ref: ${{ github.sha }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
@@ -192,7 +192,7 @@ jobs:
 
 ```yaml
 - name: Wait for tests
-  uses: lewagon/wait-on-check-action@v1.5.0
+  uses: lewagon/wait-on-check-action@v1.6.0
   with:
     ref: ${{ github.ref }}
     check-name: "Run tests"
@@ -257,7 +257,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for other workflows
-        uses: lewagon/wait-on-check-action@v1.5.0
+        uses: lewagon/wait-on-check-action@v1.6.0
         with:
           ref: ${{ github.ref }}
           running-workflow-name: "caller / callee"
@@ -270,7 +270,7 @@ Pass your GHE API endpoint:
 
 ```yaml
 - name: Wait for tests (GHE)
-  uses: lewagon/wait-on-check-action@v1.5.0
+  uses: lewagon/wait-on-check-action@v1.6.0
   with:
     ref: ${{ github.ref }}
     check-name: "Run tests"
