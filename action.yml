@@ -53,7 +53,7 @@ runs:
   using: "composite"
   steps:
     - name: Set the ruby version
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64
       with:
         ruby-version: 3.2
         bundler-cache: true
