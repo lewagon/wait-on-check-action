@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v1.6.1 - 2026-04-06
+
+### Added
+
+- Pin the `ruby/setup-ruby` version
+
 ## v1.6.0 - 2026-03-29
 
 ### Added
