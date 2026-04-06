@@ -3,6 +3,9 @@ exclude:
   - message: Shield links
     pattern: img\.shields\.io
 
+  - message: Workflow action SHAs
+    pattern: uses:\s.+@.+
+
   - message: Dependencies
     paths:
       - node_modules
