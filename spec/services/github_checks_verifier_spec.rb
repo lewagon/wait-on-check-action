@@ -10,32 +10,36 @@ describe GithubChecksVerifier do
 
   before do
     described_class.config.client = Octokit::Client.new
+    described_class.config.client.access_token = '_'
+    described_class.config.ref = '_'
     described_class.config.allowed_conclusions = %w[success skipped]
   end
 
   describe '#inputs' do
+    before { allow(service).to receive(:exit) }
+
     it 'raises an error when the ref input is empty' do
       service.config.ref = ''
       expected_msg = 'The ref parameter is required but was not provided.'
-      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      expect { service.call }.to output(/#{expected_msg}/).to_stdout
     end
 
     it 'raises an error when the repo-token input is empty' do
-      service.config.ref = '_'
       service.config.client.access_token = ''
       expected_msg = 'The repo-token parameter is required but was not provided.'
-      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      expect { service.call }.to output(/#{expected_msg}/).to_stdout
     end
   end
 
   describe '#call' do
-    before { allow(service).to receive(:wait_for_checks).and_raise(CheckNeverRunError) }
+    before do
+      allow(service).to receive(:wait_for_checks).and_raise(CheckNeverRunError)
+      allow(service).to receive(:exit)
+    end
 
     it 'exit with status false if wait_for_checks fails' do
-      service.config.ref = '_'
-      service.config.client.access_token = '_'
       expected_msg = 'The requested check was never run against this ref, exiting...'
-      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      expect { service.call }.to output(/#{expected_msg}/).to_stdout
     end
   end
 
@@ -110,9 +114,10 @@ describe GithubChecksVerifier do
 
       all_checks = []
       allow(service).to receive(:query_check_status).and_return all_checks
+      allow(service).to receive(:exit)
 
       expected_msg = 'The requested check was never run against this ref, exiting...'
-      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      expect { service.call }.to output(/#{expected_msg}/).to_stdout
     end
 
     context 'when fail_on_no_checks is false' do
@@ -147,6 +152,8 @@ describe GithubChecksVerifier do
     end
 
     context 'when fail_on_no_checks is true (default)' do
+      before { allow(service).to receive(:exit) }
+
       it 'raises an exception when check_regexp is set and no checks match' do
         service.config.check_regexp = 'non-matching-regexp'
         service.config.fail_on_no_checks = true
@@ -156,7 +163,7 @@ describe GithubChecksVerifier do
         allow(service).to receive(:query_check_status).and_return all_checks
 
         expected_msg = 'The requested check was never run against this ref, exiting...'
-        expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+        expect { service.call }.to output(/#{expected_msg}/).to_stdout
       end
 
       it 'raises an exception when check_name is set and no checks match' do
@@ -168,17 +175,12 @@ describe GithubChecksVerifier do
         allow(service).to receive(:query_check_status).and_return all_checks
 
         expected_msg = 'The requested check was never run against this ref, exiting...'
-        expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+        expect { service.call }.to output(/#{expected_msg}/).to_stdout
       end
     end
   end
 
   describe '#wait_for_check_discovery' do
-    before do
-      service.config.ref = '_'
-      service.config.client.access_token = '_'
-    end
-
     it 'polls until checks are found within the timeout' do
       service.config.check_name = 'delayed-check'
       service.config.fail_on_no_checks = true
@@ -225,25 +227,27 @@ describe GithubChecksVerifier do
       service.wait = 0
 
       allow(service).to receive(:query_check_status).and_return []
+      allow(service).to receive(:exit)
 
       expected_msg = 'The requested check was never run against this ref, exiting...'
-      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      expect { service.call }.to output(/#{expected_msg}/).to_stdout
     end
   end
 
   describe '#fail_unless_all_conclusions_allowed' do
-    it 'raises an exception if some check conclusion is not allowed' do
+    it 'prints an error message when a check conclusion is not allowed' do
       all_checks = [
         Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'success'),
         Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'failure')
       ]
 
       allow(service).to receive(:query_check_status).and_return all_checks
+      allow(service).to receive(:exit)
 
       expected_msg = 'The conclusion of one or more checks were not allowed. Allowed conclusions are: ' \
                      "success, skipped. This can be configured with the 'allowed-conclusions' param."
 
-      expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
+      expect { service.call }.to output(/#{expected_msg}/).to_stdout
     end
 
     it 'exits with status code 1 when a check conclusion is not allowed' do
@@ -253,8 +257,11 @@ describe GithubChecksVerifier do
       ]
 
       allow(service).to receive(:query_check_status).and_return all_checks
+      allow(service).to receive(:exit)
 
-      expect { service.call }.to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+      service.call
+
+      expect(service).to have_received(:exit).with(1)
     end
 
     it 'does not raise an exception if all checks conclusions are allowed' do

@@ -18,10 +18,4 @@ RSpec.configure do |config|
   end
 
   config.shared_context_metadata_behavior = :apply_to_host_groups
-
-  # SystemExit with non-zero status taints Ruby's process exit code even when
-  # caught by raise_error. Force rspec's own exit code after the suite runs.
-  config.after(:suite) do
-    at_exit { exit(RSpec.configuration.reporter.failed_examples.any? ? 1 : 0) }
-  end
 end

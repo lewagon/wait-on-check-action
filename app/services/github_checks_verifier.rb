@@ -29,7 +29,7 @@ class GithubChecksVerifier < ApplicationService
     wait_for_checks
   rescue CheckNeverRunError, CheckConclusionNotAllowedError, RequiredInputError => e
     puts e.message
-    raise SystemExit, 1
+    exit 1
   end
 
   private
