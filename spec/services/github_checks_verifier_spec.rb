@@ -246,6 +246,17 @@ describe GithubChecksVerifier do
       expect { service.call }.to raise_error(SystemExit).and output(/#{expected_msg}/).to_stdout
     end
 
+    it 'exits with status code 1 when a check conclusion is not allowed' do
+      all_checks = [
+        Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'success'),
+        Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'failure')
+      ]
+
+      allow(service).to receive(:query_check_status).and_return all_checks
+
+      expect { service.call }.to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+    end
+
     it 'does not raise an exception if all checks conclusions are allowed' do
       all_checks = [
         Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'success'),
