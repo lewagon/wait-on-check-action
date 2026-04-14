@@ -22,12 +22,14 @@ describe GithubChecksVerifier do
       service.config.ref = ''
       expected_msg = 'The ref parameter is required but was not provided.'
       expect { service.call }.to output(/#{expected_msg}/).to_stdout
+      expect(service).to have_received(:exit).with(1)
     end
 
     it 'raises an error when the repo-token input is empty' do
       service.config.client.access_token = ''
       expected_msg = 'The repo-token parameter is required but was not provided.'
       expect { service.call }.to output(/#{expected_msg}/).to_stdout
+      expect(service).to have_received(:exit).with(1)
     end
   end
 
@@ -40,6 +42,7 @@ describe GithubChecksVerifier do
     it 'exit with status false if wait_for_checks fails' do
       expected_msg = 'The requested check was never run against this ref, exiting...'
       expect { service.call }.to output(/#{expected_msg}/).to_stdout
+      expect(service).to have_received(:exit).with(1)
     end
   end
 
@@ -118,6 +121,7 @@ describe GithubChecksVerifier do
 
       expected_msg = 'The requested check was never run against this ref, exiting...'
       expect { service.call }.to output(/#{expected_msg}/).to_stdout
+      expect(service).to have_received(:exit).with(1)
     end
 
     context 'when fail_on_no_checks is false' do
@@ -164,6 +168,7 @@ describe GithubChecksVerifier do
 
         expected_msg = 'The requested check was never run against this ref, exiting...'
         expect { service.call }.to output(/#{expected_msg}/).to_stdout
+        expect(service).to have_received(:exit).with(1)
       end
 
       it 'raises an exception when check_name is set and no checks match' do
@@ -176,6 +181,7 @@ describe GithubChecksVerifier do
 
         expected_msg = 'The requested check was never run against this ref, exiting...'
         expect { service.call }.to output(/#{expected_msg}/).to_stdout
+        expect(service).to have_received(:exit).with(1)
       end
     end
   end
@@ -231,6 +237,7 @@ describe GithubChecksVerifier do
 
       expected_msg = 'The requested check was never run against this ref, exiting...'
       expect { service.call }.to output(/#{expected_msg}/).to_stdout
+      expect(service).to have_received(:exit).with(1)
     end
   end
 
@@ -248,19 +255,6 @@ describe GithubChecksVerifier do
                      "success, skipped. This can be configured with the 'allowed-conclusions' param."
 
       expect { service.call }.to output(/#{expected_msg}/).to_stdout
-    end
-
-    it 'exits with status code 1 when a check conclusion is not allowed' do
-      all_checks = [
-        Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'success'),
-        Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'failure')
-      ]
-
-      allow(service).to receive(:query_check_status).and_return all_checks
-      allow(service).to receive(:exit)
-
-      service.call
-
       expect(service).to have_received(:exit).with(1)
     end
 
