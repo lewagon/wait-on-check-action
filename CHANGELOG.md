@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v1.7.0 - 2026-04-14
+
+### Fixed
+
+- Fix the failure exit codes
+
 ## v1.6.1 - 2026-04-06
 
 ### Added
