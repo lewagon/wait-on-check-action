@@ -8,3 +8,6 @@ AllCops:
 RSpec/ExampleLength:
   Enabled: false
   Max: 10
+
+RSpec/MultipleExpectations:
+  Max: 2
