@@ -82,7 +82,7 @@ GEM
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
     uri (1.1.1)
-    yard (0.9.37)
+    yard (0.9.42)
     zeitwerk (2.6.7)
 
 PLATFORMS
@@ -104,7 +104,7 @@ DEPENDENCIES
   rubocop (~> 1.57.2)
   rubocop-performance (~> 1.21.0)
   rubocop-rspec (~> 3.0.0)
-  yard (~> 0.9.37)
+  yard (~> 0.9.42)
 
 BUNDLED WITH
    2.6.6
