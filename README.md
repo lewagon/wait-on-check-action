@@ -85,6 +85,7 @@ jobs:
 | `verbose`                  | Print detailed logs                                                       | `true`                                | `true`            |
 | `wait-interval`            | Seconds between API requests                                              | `10`                                  | `10`              |
 | `checks-discovery-timeout` | Seconds to wait for checks to be discovered                               | `60`                                  | `60`              |
+| `wait-for-duplicates`      | Wait for every check run sharing a name to complete (queries `filter=all`)| `true`                                | `false`           |
 
 ## Usage examples
 
@@ -198,6 +199,29 @@ jobs:
     check-name: "Run tests"
     repo-token: ${{ secrets.GITHUB_TOKEN }}
     checks-discovery-timeout: 300
+```
+
+### Wait for services that publish duplicate check names
+
+Some services publish multiple `check_run`s under the **same name** on a single
+commit (one per environment, retry, or internal worker). By default the GitHub
+API returns only the latest run per name (`filter=latest`), so if an early run
+finishes with `conclusion: failure` before its siblings complete, the action can
+evaluate conclusions against that partial view and exit before the successful
+runs land.
+
+Set `wait-for-duplicates: true` to query the API with `filter=all`. The action
+then waits until **every** matching run reaches a terminal state before applying
+`allowed-conclusions`:
+
+```yaml
+- name: Wait for deploy preview
+  uses: lewagon/wait-on-check-action@v1.7.0
+  with:
+    ref: ${{ github.event.pull_request.head.sha }}
+    check-name: "Deploy Preview"
+    repo-token: ${{ secrets.GITHUB_TOKEN }}
+    wait-for-duplicates: true
 ```
 
 ## Understanding check names

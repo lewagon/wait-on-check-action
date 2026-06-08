@@ -13,6 +13,7 @@ describe GithubChecksVerifier do
     described_class.config.client.access_token = '_'
     described_class.config.ref = '_'
     described_class.config.allowed_conclusions = %w[success skipped]
+    described_class.config.wait_for_duplicates = false
   end
 
   describe '#inputs' do
@@ -107,6 +108,29 @@ describe GithubChecksVerifier do
       result = service.send(:query_check_status)
 
       expect(result.map(&:name)).not_to include('invoking_check')
+    end
+
+    it 'does not request duplicate check runs by default' do
+      all_checks = load_checks_from_yml('all_checks_results.json')
+      allow(described_class.config.client)
+        .to receive(:check_runs_for_ref) { Helpers::CheckRunsResponse.new(all_checks) }
+
+      service.send(:query_check_status)
+
+      expect(described_class.config.client)
+        .to have_received(:check_runs_for_ref).with(anything, anything, hash_excluding(:filter))
+    end
+
+    it 'requests all check runs when wait_for_duplicates is enabled' do
+      all_checks = load_checks_from_yml('all_checks_results.json')
+      allow(described_class.config.client)
+        .to receive(:check_runs_for_ref) { Helpers::CheckRunsResponse.new(all_checks) }
+
+      service.config.wait_for_duplicates = true
+      service.send(:query_check_status)
+
+      expect(described_class.config.client)
+        .to have_received(:check_runs_for_ref).with(anything, anything, hash_including(filter: 'all'))
     end
   end
 

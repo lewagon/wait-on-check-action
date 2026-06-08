@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- Add `wait-for-duplicates` option to wait for every check run sharing a name to complete
+
 ## v1.7.0 - 2026-04-14
 
 ### Fixed
