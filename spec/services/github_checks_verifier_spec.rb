@@ -109,28 +109,54 @@ describe GithubChecksVerifier do
 
       expect(result.map(&:name)).not_to include('invoking_check')
     end
+  end
 
-    it 'does not request duplicate check runs by default' do
-      all_checks = load_checks_from_yml('all_checks_results.json')
-      allow(described_class.config.client)
-        .to receive(:check_runs_for_ref) { Helpers::CheckRunsResponse.new(all_checks) }
-
-      service.send(:query_check_status)
-
-      expect(described_class.config.client)
-        .to have_received(:check_runs_for_ref).with(anything, anything, hash_excluding(:filter))
+  describe 'wait_for_duplicates' do
+    let(:latest_runs) do
+      [
+        Helpers::CheckRun.new(name: 'lint', status: 'completed', conclusion: 'success'),
+        Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'success')
+      ]
     end
 
-    it 'requests all check runs when wait_for_duplicates is enabled' do
-      all_checks = load_checks_from_yml('all_checks_results.json')
-      allow(described_class.config.client)
-        .to receive(:check_runs_for_ref) { Helpers::CheckRunsResponse.new(all_checks) }
+    let(:all_runs) do
+      [
+        Helpers::CheckRun.new(name: 'lint', status: 'completed', conclusion: 'failure'),
+        Helpers::CheckRun.new(name: 'lint', status: 'completed', conclusion: 'success'),
+        Helpers::CheckRun.new(name: 'test', status: 'completed', conclusion: 'success')
+      ]
+    end
 
+    before do
+      allow(described_class.config.client).to receive(:check_runs_for_ref) do |_repo, _ref, options|
+        Helpers::CheckRunsResponse.new(options[:filter] == 'all' ? all_runs : latest_runs)
+      end
+      allow(service).to receive(:exit)
+    end
+
+    it 'sees only the latest run per name when disabled' do
+      service.config.wait_for_duplicates = false
+      result = service.send(:query_check_status)
+      expect(result.count { |check| check.name == 'lint' }).to eq(1)
+    end
+
+    it 'sees every run sharing a name when enabled' do
       service.config.wait_for_duplicates = true
-      service.send(:query_check_status)
+      result = service.send(:query_check_status)
+      expect(result.count { |check| check.name == 'lint' }).to eq(2)
+    end
 
-      expect(described_class.config.client)
-        .to have_received(:check_runs_for_ref).with(anything, anything, hash_including(filter: 'all'))
+    it 'ignores an earlier failed duplicate when disabled' do
+      service.config.wait_for_duplicates = false
+      with_captured_stdout { service.call }
+      expect(service).not_to have_received(:exit)
+    end
+
+    it 'fails when a duplicate run concluded failure when enabled' do
+      service.config.wait_for_duplicates = true
+      expected_msg = 'The conclusion of one or more checks were not allowed'
+      expect { service.call }.to output(/#{expected_msg}/).to_stdout
+      expect(service).to have_received(:exit).with(1)
     end
   end
 

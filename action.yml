@@ -49,7 +49,7 @@ inputs:
     required: false
     default: "60"
   wait-for-duplicates:
-    description: "Wait for every check run sharing a name to complete before evaluating conclusions (queries the API with filter=all instead of the default latest)"
+    description: "Require every check with a duplicate name to succeed"
     required: false
     default: "false"
 
