@@ -85,6 +85,7 @@ jobs:
 | `verbose`                  | Print detailed logs                                                       | `true`                                | `true`            |
 | `wait-interval`            | Seconds between API requests                                              | `10`                                  | `10`              |
 | `checks-discovery-timeout` | Seconds to wait for checks to be discovered                               | `60`                                  | `60`              |
+| `wait-for-duplicates`      | Require every check with a duplicate name to succeed                      | `false`                               | `false`           |
 
 ## Usage examples
 
@@ -198,6 +199,28 @@ jobs:
     check-name: "Run tests"
     repo-token: ${{ secrets.GITHUB_TOKEN }}
     checks-discovery-timeout: 300
+```
+
+### Wait for services that publish duplicate check names
+
+Some services publish multiple `check_run`s under the **same name** on a single
+commit — one per environment, retry, or internal worker. By default only the
+most recent run for a given name is considered, so when these runs finish at
+different times the first one to complete determines the reported status. A
+single early failure can then fail the wait even though a later run of the same
+name succeeds, making the result non-deterministic from one CI run to the next.
+
+Set `wait-for-duplicates: true` to require **every** check sharing a name to
+succeed before the action continues:
+
+```yaml
+- name: Wait for deploy preview
+  uses: lewagon/wait-on-check-action@v1.7.0
+  with:
+    ref: ${{ github.ref }}
+    check-name: "Deploy Preview"
+    repo-token: ${{ secrets.GITHUB_TOKEN }}
+    wait-for-duplicates: true
 ```
 
 ## Understanding check names

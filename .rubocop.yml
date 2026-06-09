@@ -5,6 +5,9 @@ require:
 AllCops:
   NewCops: enable
 
+Metrics/ClassLength:
+  Max: 110
+
 RSpec/ExampleLength:
   Enabled: false
   Max: 10

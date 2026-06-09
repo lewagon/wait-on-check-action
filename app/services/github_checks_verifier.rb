@@ -23,6 +23,7 @@ class GithubChecksVerifier < ApplicationService
   config_accessor(:discovery_timeout) { 60 }
   config_accessor(:wait) { 30 }
   config_accessor(:workflow_name) { '' }
+  config_accessor(:wait_for_duplicates) { false }
 
   def call
     validate_inputs
@@ -40,9 +41,9 @@ class GithubChecksVerifier < ApplicationService
   end
 
   def query_check_status
-    checks = client.check_runs_for_ref(
-      repo, ref, { accept: 'application/vnd.github.antiope-preview+json' }
-    ).check_runs
+    options = { accept: 'application/vnd.github.antiope-preview+json' }
+    options[:filter] = 'all' if wait_for_duplicates
+    checks = client.check_runs_for_ref(repo, ref, options).check_runs
     log_checks(checks, 'Checks running on ref:')
 
     apply_filters(checks)

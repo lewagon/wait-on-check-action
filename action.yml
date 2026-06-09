@@ -48,6 +48,10 @@ inputs:
     description: "Seconds to wait for checks to be discovered"
     required: false
     default: "60"
+  wait-for-duplicates:
+    description: "Require every check with a duplicate name to succeed"
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -77,6 +81,7 @@ runs:
         API_ENDPOINT: ${{ inputs.api-endpoint }}
         FAIL_ON_NO_CHECKS: ${{ inputs.fail-on-no-checks }}
         CHECKS_DISCOVERY_TIMEOUT: ${{ inputs.checks-discovery-timeout }}
+        WAIT_FOR_DUPLICATES: ${{ inputs.wait-for-duplicates }}
 
 branding:
   icon: "check-circle"
