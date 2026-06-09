@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## v1.8.0 - 2026-06-09
+
 ### Added
 
 - Add a `wait-for-duplicates` option to require every check with a duplicate name to succeed
