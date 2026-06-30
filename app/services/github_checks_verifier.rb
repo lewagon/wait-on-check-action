@@ -46,7 +46,17 @@ class GithubChecksVerifier < ApplicationService
     checks = client.check_runs_for_ref(repo, ref, options).check_runs
     log_checks(checks, 'Checks running on ref:')
 
+    checks = keep_latest_per_name(checks) unless wait_for_duplicates
     apply_filters(checks)
+  end
+
+  # The API's `filter=latest` only deduplicates within a single check suite, so a
+  # ref can still carry several runs sharing a name when separate events (e.g. an
+  # edited PR) spawn new suites. Unless we are explicitly waiting for duplicates,
+  # keep only the most recently started run for each name so a stale earlier
+  # attempt can't override a newer one.
+  def keep_latest_per_name(checks)
+    checks.group_by(&:name).map { |_name, runs| runs.max_by { |run| run.started_at.to_s } }
   end
 
   def log_checks(checks, msg)

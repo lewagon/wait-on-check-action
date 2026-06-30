@@ -160,6 +160,37 @@ describe GithubChecksVerifier do
     end
   end
 
+  describe 'duplicate names across check suites' do
+    # The real API returns one run per check suite even with filter=latest, so a
+    # ref edited after a failure carries both the stale failure and the newer pass.
+    let(:cross_suite_runs) do
+      [
+        Helpers::CheckRun.new(name: 'lint', status: 'completed', conclusion: 'failure',
+                              started_at: '2026-06-30T13:58:00Z'),
+        Helpers::CheckRun.new(name: 'lint', status: 'completed', conclusion: 'success',
+                              started_at: '2026-06-30T14:07:00Z')
+      ]
+    end
+
+    before do
+      allow(described_class.config.client).to receive(:check_runs_for_ref)
+        .and_return(Helpers::CheckRunsResponse.new(cross_suite_runs))
+      allow(service).to receive(:exit)
+    end
+
+    it 'keeps only the most recently started run per name when disabled' do
+      service.config.wait_for_duplicates = false
+      result = service.send(:query_check_status)
+      expect(result.map(&:conclusion)).to eq(['success'])
+    end
+
+    it 'does not fail on a stale earlier failure superseded by a newer pass' do
+      service.config.wait_for_duplicates = false
+      with_captured_stdout { service.call }
+      expect(service).not_to have_received(:exit)
+    end
+  end
+
   describe '#fail_if_requested_check_never_run' do
     it 'raises an exception if check_name is not empty and all_checks is' do
       service.config.check_name = 'test'
