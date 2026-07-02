@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v1.8.1 - 2026-07-02
+
+### Fixed
+
+- Fix `wait-for-duplicates` duplication across check suites
+
 ## v1.8.0 - 2026-06-09
 
 ### Added
