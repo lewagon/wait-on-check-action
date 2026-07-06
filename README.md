@@ -8,6 +8,9 @@ Pause until a job in another workflow completes successfully.
 
 This action uses GitHub's [Checks API](https://docs.github.com/rest/checks) to poll for check results. On success, the action exits allowing the workflow to resume. Otherwise, the action exits with status code 1 and fails the workflow.
 
+> [!TIP]
+> Prefer to skip the Ruby setup overhead? [`wait-on-check-action-ts`](https://github.com/matiasalbarello/wait-on-check-action-ts) is a TypeScript port that runs as a native `node24` action with no setup step, while keeping the same parameters, defaults, and behavior.
+
 ## When to use this action
 
 - You need to wait for checks on **non-default branches** (PRs, feature branches)
