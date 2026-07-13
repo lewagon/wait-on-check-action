@@ -11,6 +11,13 @@ describe GithubChecksVerifier do
   before do
     described_class.config.client = Octokit::Client.new
     described_class.config.allowed_conclusions = %w[success skipped]
+    described_class.config.check_name = ''
+    described_class.config.check_regexp = ''
+    described_class.config.current_refs = []
+    described_class.config.current_run_id = nil
+    described_class.config.ignore_checks = []
+    described_class.config.ref = nil
+    described_class.config.workflow_name = nil
   end
 
   describe '#call' do
@@ -202,6 +209,67 @@ describe GithubChecksVerifier do
       # only assert that the method is called. The functionality will be tested
       # on #apply_regexp_filter tests
       expect(service).to have_received(:apply_regexp_filter)
+    end
+
+    it 'filters stale duplicate checks from other Actions runs when the target ref is current' do
+      checks = [
+        Helpers::CheckRun.new(
+          name: 'test-publish',
+          status: 'completed',
+          conclusion: 'success',
+          details_url: 'https://github.com/X4BNet/X4B.Net/actions/runs/29220520531/job/86807045944'
+        ),
+        Helpers::CheckRun.new(
+          name: 'test-publish',
+          status: 'completed',
+          conclusion: 'failure',
+          details_url: 'https://github.com/X4BNet/X4B.Net/actions/runs/29220453218/job/86788822364'
+        ),
+        Helpers::CheckRun.new(
+          name: 'test-redis',
+          status: 'completed',
+          conclusion: 'success',
+          details_url: 'https://github.com/X4BNet/X4B.Net/actions/runs/29220520531/job/86807071072'
+        )
+      ]
+
+      service.config.check_regexp = 'test-*.*'
+      service.config.current_refs = ['1da749d1ab734a9cefce80760faa26004fa90208']
+      service.config.current_run_id = '29220520531'
+      service.config.ref = '1da749d1ab734a9cefce80760faa26004fa90208'
+
+      service.send(:apply_filters, checks)
+
+      expect(checks.map { |check| [check.conclusion, check.details_url] }).to contain_exactly(
+        ['success', include('/actions/runs/29220520531/')],
+        ['success', include('/actions/runs/29220520531/')]
+      )
+    end
+
+    it 'keeps checks from other Actions runs when the target ref is not current' do
+      checks = [
+        Helpers::CheckRun.new(
+          name: 'test-publish',
+          status: 'completed',
+          conclusion: 'success',
+          details_url: 'https://github.com/X4BNet/X4B.Net/actions/runs/29220520531/job/86807045944'
+        ),
+        Helpers::CheckRun.new(
+          name: 'test-publish',
+          status: 'completed',
+          conclusion: 'failure',
+          details_url: 'https://github.com/X4BNet/X4B.Net/actions/runs/29220453218/job/86788822364'
+        )
+      ]
+
+      service.config.check_regexp = 'test-*.*'
+      service.config.current_refs = ['1da749d1ab734a9cefce80760faa26004fa90208']
+      service.config.current_run_id = '29220520531'
+      service.config.ref = 'main'
+
+      service.send(:apply_filters, checks)
+
+      expect(checks.map(&:conclusion)).to contain_exactly('success', 'failure')
     end
   end
 

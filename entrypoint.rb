@@ -15,6 +15,13 @@ wait = ENV.fetch('WAIT_INTERVAL', nil)
 workflow_name = ENV.fetch('RUNNING_WORKFLOW_NAME', nil)
 api_endpoint = ENV.fetch('API_ENDPOINT', '')
 ignore_checks = ENV.fetch('IGNORE_CHECKS', nil)
+current_run_id = ENV.fetch('GITHUB_RUN_ID', nil)
+current_refs = [
+  ENV.fetch('GITHUB_SHA', nil),
+  ENV.fetch('GITHUB_REF', nil),
+  ENV.fetch('GITHUB_REF_NAME', nil),
+  ENV.fetch('GITHUB_HEAD_REF', nil)
+]
 
 GithubChecksVerifier.configure do |config|
   config.allowed_conclusions = allowed_conclusions.split(',').map(&:strip)
@@ -29,6 +36,8 @@ GithubChecksVerifier.configure do |config|
   config.verbose = verbose == 'true'
   config.wait = wait.to_i
   config.workflow_name = workflow_name
+  config.current_run_id = current_run_id
+  config.current_refs = current_refs.compact
 end
 
 GithubChecksVerifier.call

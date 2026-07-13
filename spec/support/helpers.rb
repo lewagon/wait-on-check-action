@@ -5,7 +5,7 @@ require 'json'
 module Helpers
   SAMPLE_RESPONSES_BASE_PATH = 'spec/github_api_sample_responses/'
 
-  CheckRun = Struct.new(:status, :conclusion, :name)
+  CheckRun = Struct.new(:status, :conclusion, :name, :details_url, :html_url)
   CheckRunsResponse = Struct.new(:check_runs)
 
   def load_json_sample(file_name)
