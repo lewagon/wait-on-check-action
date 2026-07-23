@@ -52,6 +52,10 @@ inputs:
     description: "Require every check with a duplicate name to succeed"
     required: false
     default: "false"
+  bundler-cache:
+    description: "Enable Bundler cache in ruby/setup-ruby"
+    required: false
+    default: "true"
 
 runs:
   using: "composite"
@@ -60,7 +64,7 @@ runs:
       uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64
       with:
         ruby-version: 3.2
-        bundler-cache: true
+        bundler-cache: ${{ inputs.bundler-cache }}
         working-directory: ${{ github.action_path }}
       env:
         BUNDLE_PATH: "vendor/bundle"
