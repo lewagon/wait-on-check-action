@@ -82,6 +82,7 @@ jobs:
 | `api-endpoint`             | Custom GitHub API endpoint (for GHE)                                      | `https://github.mycompany.com/api/v3` | -                 |
 | `check-name`               | Specific check name to wait for                                           | `"Run tests"`                         | -                 |
 | `check-regexp`             | Filter checks using regex pattern                                         | `"test-.*"`                           | -                 |
+| `bundler-cache`            | Enable Bundler cache in `ruby/setup-ruby`                                 | `true`/`false`                         | `true`            |
 | `fail-on-no-checks`        | Fail the action if no checks match the check-name or check-regexp filters | `true`                                | `true`            |
 | `ignore-checks`            | Comma-separated list of checks to ignore                                  | `optional-lint,coverage-report`       | -                 |
 | `running-workflow-name`    | Name of current workflow (to exclude from waiting)                        | `"Deploy"`                            | -                 |
