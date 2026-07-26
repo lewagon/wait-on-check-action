@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v1.9.0 - 2026-07-26
+
+### Added
+
+- Add `bundler-cache` option to toggle the `ruby/setup-ruby` cache
+
 ## v1.8.1 - 2026-07-02
 
 ### Fixed
