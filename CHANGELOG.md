@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## v1.9.1 - 2026-08-07
+
+### Added
+
+- Add a step to install dependencies without caching when `bundler-cache` is false
+
 ## v1.9.0 - 2026-07-26
 
 ### Added
